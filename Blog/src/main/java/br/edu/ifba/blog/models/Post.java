@@ -1,6 +1,5 @@
 package br.edu.ifba.blog.models;
 
-import br.edu.ifba.blog.dto.PostRequestDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -21,27 +20,6 @@ public class Post {
 	@Enumerated(EnumType.STRING)
 	private Categoria categoria;
 	
-	
-	
-	public Post() {
-		
-	}
-	
-	public Post(Long id, String titulo, String texto, Usuario usuario, Categoria categoria) {
-		this.id = id;
-		this.titulo = titulo;
-		this.texto = texto;
-		this.usuario = usuario;
-		this.categoria = categoria;
-	}
-	
-	public Post(PostRequestDTO postData, Usuario usuario) {
-		this.titulo = postData.titulo();
-		this.texto = postData.texto();
-		this.categoria = postData.categoria();
-		this.usuario = usuario;
-		
-	}
 	
 	public Long getId() {
 		return id;
