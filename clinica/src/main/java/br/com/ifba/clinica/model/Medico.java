@@ -1,5 +1,7 @@
 package br.com.ifba.clinica.model;
 
+import br.com.ifba.clinica.DTO.MedicoRequestDTO;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,7 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Medico {
@@ -18,7 +20,7 @@ public class Medico {
 	@Embedded
 	private DadosPessoais dados;
 	
-	@OneToOne
+	@ManyToOne(cascade=CascadeType.PERSIST)
 	private Endereco endereco;
 	private String crm;
 	
@@ -37,6 +39,12 @@ public class Medico {
 		this.especialidade = especialidade;
 	}
 	
+	public Medico(MedicoRequestDTO medicoData) {
+		this.dados = medicoData.dadosPessoais();
+		this.endereco = medicoData.endereco();
+		this.crm = medicoData.crm();
+		this.especialidade = medicoData.especialidade();
+	}
 	
 	public DadosPessoais getDados() {
 		return dados;

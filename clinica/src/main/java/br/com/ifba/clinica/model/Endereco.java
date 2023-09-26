@@ -11,7 +11,7 @@ public class Endereco {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String logradouro;
+	
 	
 	@Column(nullable = true)
 	private Integer numero;
@@ -22,6 +22,7 @@ public class Endereco {
 	private String cidade;
 	private String uf;
 	private String cep;
+	private String logradouro;
 	
 	
 	public Endereco() {
