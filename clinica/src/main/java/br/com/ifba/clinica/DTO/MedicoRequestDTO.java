@@ -5,7 +5,7 @@ import br.com.ifba.clinica.model.Endereco;
 import br.com.ifba.clinica.model.Especialidade;
 
 
-public record MedicoRequestDTO(DadosPessoais dadosPessoais, Endereco endereco, String crm, Especialidade especialidade) {
+public record MedicoRequestDTO(DadosPessoais dadosPessoais, EnderecoRequestDTO endereco, String crm, Especialidade especialidade) {
 
 	
 }

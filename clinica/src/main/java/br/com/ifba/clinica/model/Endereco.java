@@ -1,5 +1,6 @@
 package br.com.ifba.clinica.model;
 
+import br.com.ifba.clinica.DTO.EnderecoRequestDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,6 +40,16 @@ public class Endereco {
 		this.cidade = cidade;
 		this.uf = uf;
 		this.cep = cep;
+	}
+	
+	public Endereco(EnderecoRequestDTO endereco) {
+		this.bairro = endereco.bairro();
+		this.logradouro = endereco.logradouro();
+		this.numero = endereco.numero();
+		this.complemento = endereco.complemento();
+		this.cidade = endereco.cidade();
+		this.uf = endereco.uf();
+		this.cep = endereco.cep();
 	}
 	
 	public Long getId() {

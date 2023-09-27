@@ -41,7 +41,8 @@ public class Medico {
 	
 	public Medico(MedicoRequestDTO medicoData) {
 		this.dados = medicoData.dadosPessoais();
-		this.endereco = medicoData.endereco();
+		Endereco endereco = new Endereco(medicoData.endereco());
+		this.endereco = endereco;
 		this.crm = medicoData.crm();
 		this.especialidade = medicoData.especialidade();
 	}
