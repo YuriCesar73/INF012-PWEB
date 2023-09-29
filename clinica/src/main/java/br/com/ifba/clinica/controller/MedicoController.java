@@ -2,6 +2,7 @@ package br.com.ifba.clinica.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,13 +23,14 @@ import br.com.ifba.clinica.service.MedicoService;
 @RequestMapping("/medicos")
 public class MedicoController {
 	
-	 MedicoService servico = new MedicoService();
+	@Autowired
+	 MedicoService servico;
 	
 	@PostMapping("/cadastrar")
 	public ResponseEntity cadastrarMedico(@RequestBody MedicoRequestDTO postData) {
-	
+		
 		servico.cadastrarMedico(postData);
-		return new ResponseEntity<>(HttpStatus.CREATED);
+		return new ResponseEntity<>(HttpStatus.CREATED); 
 	}
 	
 	@GetMapping("/listar")

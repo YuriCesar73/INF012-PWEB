@@ -13,7 +13,8 @@ public record MedicoResponseDTO(String nome, String email, String crm, Especiali
 	}
 
 	public static List<MedicoResponseDTO> converter (List<Medico> listaMedicos) {
-		return listaMedicos.stream().map(MedicoResponseDTO::new).collect(Collectors.toList());
+		return listaMedicos.stream().map(MedicoResponseDTO::new).collect(Collectors.toList()); 
 	}
 	
 }
+ 
