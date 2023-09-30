@@ -38,9 +38,12 @@ public class MedicoService {
 		
 		if(medico.isPresent()) {
 			Medico med = medico.get();
-			med.setNome(dados.nome() == null ? med.getNome() : dados.nome());
+			System.out.println(dados.nome());
+			med.setNome(dados.nome() == null ? med.getNome(): dados.nome());
 			med.setTelefone(dados.telefone() == null ? med.getTelefone() : dados.telefone());
 			med.setEndereco(dados.endereco() == null ? med.getEndereco() : dados.endereco());
+			System.out.println(med.getNome());
+			medicoRepository.save(med);
 			return  new ResponseEntity<>(HttpStatus.ACCEPTED);
 		}
 		else {

@@ -1,5 +1,7 @@
 package br.com.ifba.clinica.model;
 
+import java.util.Objects;
+
 import jakarta.persistence.Embeddable;
 
 @Embeddable
@@ -41,6 +43,24 @@ public class DadosPessoais {
 
 	public void setTelefone(String telefone) {
 		this.telefone = telefone;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(email, nome, telefone);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DadosPessoais other = (DadosPessoais) obj;
+		return Objects.equals(email, other.email) && Objects.equals(nome, other.nome)
+				&& Objects.equals(telefone, other.telefone);
 	}
 	
 	

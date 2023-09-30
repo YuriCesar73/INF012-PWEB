@@ -40,7 +40,6 @@ public class MedicoController {
 	
 	@PutMapping("/atualizar/{id}")
 	public ResponseEntity atualizarDados(@PathVariable Long id, @RequestBody UpdateFormDTO dados) {
-		
 		try {
 			servico.atualizarDados(id, dados);
 			return new ResponseEntity<>(HttpStatus.CREATED);
