@@ -29,7 +29,7 @@ public class MedicoService {
 
 	public List<MedicoResponseDTO> listarMedicos(){
 		
-		return MedicoResponseDTO.converter(medicoRepository.findByOrderByDadosNomeAsc());
+		return MedicoResponseDTO.converter(medicoRepository.findByActiveTrueOrderByDadosNomeAsc());
 	}
 	
 	public ResponseEntity atualizarDados(Long id, UpdateFormDTO dados) throws MedicoNotFound{
@@ -38,17 +38,27 @@ public class MedicoService {
 		
 		if(medico.isPresent()) {
 			Medico med = medico.get();
-			System.out.println(dados.nome());
 			med.setNome(dados.nome() == null ? med.getNome(): dados.nome());
 			med.setTelefone(dados.telefone() == null ? med.getTelefone() : dados.telefone());
 			med.setEndereco(dados.endereco() == null ? med.getEndereco() : dados.endereco());
 			System.out.println(med.getNome());
-			medicoRepository.save(med);
 			return  new ResponseEntity<>(HttpStatus.ACCEPTED);
 		}
-		else {
+
 			throw new MedicoNotFound();
+	}
+	
+	
+	public ResponseEntity deleteMedico(Long id) throws MedicoNotFound {
+		Optional<Medico> medico = medicoRepository.findById(id);
+		
+		if(medico.isPresent()) {
+			medico.get().setActive(false);
+			medicoRepository.save(medico.get());
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
+		
+		throw new MedicoNotFound();
 	}
 
 }
