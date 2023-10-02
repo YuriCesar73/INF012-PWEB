@@ -23,9 +23,10 @@ public class MedicoService {
 	@Autowired 
 	private MedicoRepository medicoRepository;
 
-	public void cadastrarMedico(MedicoRequestDTO data) {
+	public MedicoResponseDTO cadastrarMedico(MedicoRequestDTO data) {
 		Medico medico = new Medico(data);
 		medicoRepository.save(medico);
+		return new MedicoResponseDTO(medico);
 	}
 
 	public List<MedicoResponseDTO> listarMedicos(Integer page){
@@ -42,7 +43,6 @@ public class MedicoService {
 			med.setNome(dados.nome() == null ? med.getNome(): dados.nome());
 			med.setTelefone(dados.telefone() == null ? med.getTelefone() : dados.telefone());
 			med.setEndereco(dados.endereco() == null ? med.getEndereco() : dados.endereco());
-			System.out.println(med.getNome());
 			return  new ResponseEntity<>(HttpStatus.ACCEPTED);
 		}
 

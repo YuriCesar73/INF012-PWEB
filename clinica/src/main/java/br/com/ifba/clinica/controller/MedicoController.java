@@ -33,10 +33,10 @@ public class MedicoController {
 	 MedicoService servico;
 	
 	@PostMapping("/cadastrar")
-	public ResponseEntity cadastrarMedico(@Valid @RequestBody MedicoRequestDTO postData) {
+	public ResponseEntity<MedicoResponseDTO> cadastrarMedico(@Valid @RequestBody MedicoRequestDTO postData) {
 		
-		servico.cadastrarMedico(postData);
-		return new ResponseEntity<>(HttpStatus.CREATED);  
+		MedicoResponseDTO response = servico.cadastrarMedico(postData);
+		return new ResponseEntity<MedicoResponseDTO> (response, HttpStatus.CREATED);  
 	}
 	
 	@GetMapping("/listar/")
