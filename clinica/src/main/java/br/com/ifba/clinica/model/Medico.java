@@ -2,6 +2,7 @@ package br.com.ifba.clinica.model;
 
 import br.com.ifba.clinica.DTO.MedicoRequestDTO;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -22,10 +23,13 @@ public class Medico {
 	
 	@ManyToOne(cascade=CascadeType.PERSIST)
 	private Endereco endereco;
+	@Column(nullable = false)
 	private String crm;
 	
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private Especialidade especialidade;
+	@Column(nullable = false)
 	private Boolean active;
 	
 	public Medico() {

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,20 +21,22 @@ import br.com.ifba.clinica.DTO.MedicoResponseDTO;
 import br.com.ifba.clinica.DTO.UpdateFormDTO;
 import br.com.ifba.clinica.exception.MedicoNotFound;
 import br.com.ifba.clinica.service.MedicoService;
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/medicos")
+
 public class MedicoController {
 	
 	@Autowired
 	 MedicoService servico;
 	
 	@PostMapping("/cadastrar")
-	public ResponseEntity cadastrarMedico(@RequestBody MedicoRequestDTO postData) {
+	public ResponseEntity cadastrarMedico(@Valid @RequestBody MedicoRequestDTO postData) {
 		
 		servico.cadastrarMedico(postData);
-		return new ResponseEntity<>(HttpStatus.CREATED); 
+		return new ResponseEntity<>(HttpStatus.CREATED);  
 	}
 	
 	@GetMapping("/listar/")

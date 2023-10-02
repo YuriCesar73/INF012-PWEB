@@ -3,11 +3,16 @@ package br.com.ifba.clinica.model;
 import java.util.Objects;
 
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotBlank;
 
 @Embeddable
 public class DadosPessoais {
+	
+	@NotBlank(message = "{nome.not.blank}")
 	private String nome;
+	@NotBlank(message = "{email.not.blank}")
 	private String email;
+	@NotBlank(message = "{telefone.not.blank}")
 	private String telefone;
 	
 	public DadosPessoais() {

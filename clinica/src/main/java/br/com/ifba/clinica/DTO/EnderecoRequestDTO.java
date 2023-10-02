@@ -1,8 +1,18 @@
 package br.com.ifba.clinica.DTO;
 
-public record EnderecoRequestDTO(String logradouro, Integer numero, String complemento, String bairro, String cidade, String uf,
-		String cep) {
-	
-	
+import jakarta.validation.constraints.NotBlank;
 
+public record EnderecoRequestDTO(
+		@NotBlank(message = "{logradouro.not.blank}")
+		String logradouro, 
+		Integer numero,
+		String complemento, 
+		@NotBlank(message = "{bairro.not.blank}")
+		String bairro,
+		@NotBlank(message = "{cidade.not.blank}")
+		String cidade,
+		@NotBlank(message = "{uf.not.blank}")
+		String uf,
+		@NotBlank(message = "{cep.not.blank}")
+		String cep) {
 }
