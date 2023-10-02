@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.ifba.clinica.DTO.MedicoRequestDTO;
 import br.com.ifba.clinica.DTO.MedicoResponseDTO;
-import br.com.ifba.clinica.DTO.UpdateFormDTO;
+import br.com.ifba.clinica.DTO.MedicoUpdateDTO;
 import br.com.ifba.clinica.exception.MedicoNotFound;
 import br.com.ifba.clinica.model.Medico;
 import br.com.ifba.clinica.repository.MedicoRepository;
@@ -34,7 +34,7 @@ public class MedicoService {
 		return MedicoResponseDTO.converter(medicoRepository.findByActiveTrueOrderByDadosNomeAsc(PageRequest.of(page == null ? 0 : page, 10)));
 	}
 	
-	public ResponseEntity atualizarDados(Long id, UpdateFormDTO dados) throws MedicoNotFound{
+	public ResponseEntity atualizarDados(Long id, MedicoUpdateDTO dados) throws MedicoNotFound{
 		
 		Optional<Medico> medico = medicoRepository.findById(id);
 		

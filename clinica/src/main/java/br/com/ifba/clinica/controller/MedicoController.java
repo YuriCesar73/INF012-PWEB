@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.ifba.clinica.DTO.MedicoRequestDTO;
 import br.com.ifba.clinica.DTO.MedicoResponseDTO;
-import br.com.ifba.clinica.DTO.UpdateFormDTO;
+import br.com.ifba.clinica.DTO.MedicoUpdateDTO;
 import br.com.ifba.clinica.exception.MedicoNotFound;
 import br.com.ifba.clinica.service.MedicoService;
 import jakarta.validation.Valid;
@@ -34,7 +34,6 @@ public class MedicoController {
 	
 	@PostMapping("/cadastrar")
 	public ResponseEntity<MedicoResponseDTO> cadastrarMedico(@Valid @RequestBody MedicoRequestDTO postData) {
-		
 		MedicoResponseDTO response = servico.cadastrarMedico(postData);
 		return new ResponseEntity<MedicoResponseDTO> (response, HttpStatus.CREATED);  
 	}
@@ -46,7 +45,7 @@ public class MedicoController {
 	}
 	
 	@PutMapping("/atualizar/{id}")
-	public ResponseEntity atualizarDados(@PathVariable Long id, @RequestBody UpdateFormDTO dados) {
+	public ResponseEntity atualizarDados(@PathVariable Long id, @RequestBody MedicoUpdateDTO dados) {
 		try {
 			servico.atualizarDados(id, dados);
 			return new ResponseEntity<>(HttpStatus.CREATED);
