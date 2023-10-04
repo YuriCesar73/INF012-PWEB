@@ -5,23 +5,15 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import br.com.ifba.clinica.DTO.MedicoRequestDTO;
-import br.com.ifba.clinica.DTO.MedicoResponseDTO;
-import br.com.ifba.clinica.DTO.MedicoUpdateDTO;
 import br.com.ifba.clinica.DTO.PacienteRequestDTO;
 import br.com.ifba.clinica.DTO.PacienteResponseDTO;
 import br.com.ifba.clinica.DTO.PacienteUpdateDTO;
-import br.com.ifba.clinica.exception.MedicoNotFound;
 import br.com.ifba.clinica.exception.PacienteNotFound;
 import br.com.ifba.clinica.exception.ValidationInvalid;
 import br.com.ifba.clinica.model.Endereco;
-import br.com.ifba.clinica.model.Medico;
 import br.com.ifba.clinica.model.Paciente;
-import br.com.ifba.clinica.repository.MedicoRepository;
 import br.com.ifba.clinica.repository.PacienteRepository;
 
 @Service

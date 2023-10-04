@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.ifba.clinica.DTO.MedicoUpdateDTO;
 import br.com.ifba.clinica.DTO.PacienteRequestDTO;
 import br.com.ifba.clinica.DTO.PacienteResponseDTO;
 import br.com.ifba.clinica.DTO.PacienteUpdateDTO;
@@ -39,13 +38,13 @@ public class PacienteController {
 	}
 	
 	@GetMapping("/listar/")
-	public ResponseEntity listarPacientes(@RequestParam(required=false) Integer page) {
+	public ResponseEntity<List<PacienteResponseDTO>> listarPacientes(@RequestParam(required=false) Integer page) {
 		//VERIFICAR A FORMA DE PASSAR A PÁGINA
 		return new ResponseEntity<List<PacienteResponseDTO>>(servico.listarPacientes(page),HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/atualizar/{id}")
-	public ResponseEntity atualizarDados(@PathVariable Long id, @Valid @RequestBody PacienteUpdateDTO dados){
+	public ResponseEntity<?> atualizarDados(@PathVariable Long id, @Valid @RequestBody PacienteUpdateDTO dados){
 		
 		try {
 			servico.atualizarDados(id, dados);
@@ -59,7 +58,7 @@ public class PacienteController {
 	}
 	
 	@DeleteMapping("/apagar/{id}")
-	public ResponseEntity deleteMedico(@PathVariable Long id) {
+	public ResponseEntity<?> deleteMedico(@PathVariable Long id) {
 		try {
 			servico.deletePaciente(id);
 			return new ResponseEntity<>(HttpStatus.ACCEPTED);

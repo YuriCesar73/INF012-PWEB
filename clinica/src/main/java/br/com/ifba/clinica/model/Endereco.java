@@ -19,15 +19,15 @@ public class Endereco {
 	
 	@Column(nullable = true)
 	private String complemento;
-	//@Column(nullable = false)
+	@Column(nullable = false)
 	private String bairro;
-	//@Column(nullable = false)
+	@Column(nullable = false)
 	private String cidade;
-	//@Column(nullable = false)
+	@Column(nullable = false)
 	private String uf;
-	//@Column(nullable = false)
+	@Column(nullable = false)
 	private String cep;
-	//@Column(nullable = false)
+	@Column(nullable = false)
 	private String logradouro;
 	
 	

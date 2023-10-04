@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +22,6 @@ import br.com.ifba.clinica.exception.MedicoNotFound;
 import br.com.ifba.clinica.exception.ValidationInvalid;
 import br.com.ifba.clinica.service.MedicoService;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/medicos")
@@ -40,13 +38,13 @@ public class MedicoController {
 	}
 	
 	@GetMapping("/listar/")
-	public ResponseEntity listaMedicos(@RequestParam(required=false) Integer page) {
+	public ResponseEntity<List<MedicoResponseDTO>> listaMedicos(@RequestParam(required=false) Integer page) {
 		//VERIFICAR A FORMA DE PASSAR A PÁGINA
 		return new ResponseEntity<List<MedicoResponseDTO>>(servico.listarMedicos(page),HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/atualizar/{id}")
-	public ResponseEntity atualizarDados(@PathVariable Long id, @Valid @RequestBody MedicoUpdateDTO dados){
+	public ResponseEntity<?> atualizarDados(@PathVariable Long id, @Valid @RequestBody MedicoUpdateDTO dados){
 		
 		try {
 			servico.atualizarDados(id, dados);
@@ -60,7 +58,7 @@ public class MedicoController {
 	}
 	
 	@DeleteMapping("/apagar/{id}")
-	public ResponseEntity deleteMedico(@PathVariable Long id) {
+	public ResponseEntity<?> deleteMedico(@PathVariable Long id) {
 		try {
 			servico.deleteMedico(id);
 			return new ResponseEntity<>(HttpStatus.ACCEPTED);
