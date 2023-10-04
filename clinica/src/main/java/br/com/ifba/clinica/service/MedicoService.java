@@ -1,7 +1,6 @@
 package br.com.ifba.clinica.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -42,18 +41,12 @@ public class MedicoService {
 			throw error;
 		}
 		
-		Optional<Medico> medico = medicoRepository.findById(id);
+		Medico medico = medicoRepository.findById(id).orElseThrow(MedicoNotFound::new);
 		
-		if(medico.isEmpty()) {
-			throw new MedicoNotFound();
-		}
-
-
-		Medico med = medico.get();
-		med.setNome(dados.nome() == null ? med.getNome(): dados.nome());
-		med.setTelefone(dados.telefone() == null ? med.getTelefone() : dados.telefone());
-		med.setEndereco(dados.endereco() == null ? med.getEndereco() : new Endereco(dados.endereco()));
-		medicoRepository.save(med);
+		medico.setNome(dados.nome() == null ? medico.getNome(): dados.nome());
+		medico.setTelefone(dados.telefone() == null ? medico.getTelefone() : dados.telefone());
+		medico.setEndereco(dados.endereco() == null ? medico.getEndereco() : new Endereco(dados.endereco()));
+		medicoRepository.save(medico);
 
 	}
 	
@@ -66,14 +59,10 @@ public class MedicoService {
 	}
 
 	public void deleteMedico(Long id) throws MedicoNotFound {
-		Optional<Medico> medico = medicoRepository.findById(id);
+		Medico medico = medicoRepository.findById(id).orElseThrow(MedicoNotFound::new);
 		
-		if(medico.isEmpty()) {
-			throw new MedicoNotFound();
-		}
-		
-		medico.get().setActive(false);
-		medicoRepository.save(medico.get());
+		medico.setActive(false);
+		medicoRepository.save(medico);
 	}
 
 }

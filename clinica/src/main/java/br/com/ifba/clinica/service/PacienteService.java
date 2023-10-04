@@ -1,7 +1,6 @@
 package br.com.ifba.clinica.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -42,18 +41,12 @@ public class PacienteService {
 			throw error;
 		}
 		
-		Optional<Paciente> paciente = pacienteRepository.findById(id);
+		Paciente paciente = pacienteRepository.findById(id).orElseThrow(PacienteNotFound::new);
 		
-		if(paciente.isEmpty()) {
-			throw new PacienteNotFound();
-		}
-
-
-		Paciente p = paciente.get();
-		p.setNome(dados.nome() == null ? p.getNome(): dados.nome());
-		p.setTelefone(dados.telefone() == null ? p.getTelefone() : dados.telefone());
-		p.setEndereco(dados.endereco() == null ? p.getEndereco() : new Endereco(dados.endereco()));
-		pacienteRepository.save(p);
+		paciente.setNome(dados.nome() == null ? paciente.getNome(): dados.nome());
+		paciente.setTelefone(dados.telefone() == null ? paciente.getTelefone() : dados.telefone());
+		paciente.setEndereco(dados.endereco() == null ? paciente.getEndereco() : new Endereco(dados.endereco()));
+		pacienteRepository.save(paciente);
 
 	}
 	
@@ -66,14 +59,10 @@ public class PacienteService {
 	}
 
 	public void deletePaciente(Long id) throws PacienteNotFound {
-		Optional<Paciente> paciente = pacienteRepository.findById(id);
+		Paciente paciente = pacienteRepository.findById(id).orElseThrow(PacienteNotFound::new);
 		
-		if(paciente.isEmpty()) {
-			throw new PacienteNotFound();
-		}
-		
-		paciente.get().setActive(false);
-		pacienteRepository.save(paciente.get());
+		paciente.setActive(false);
+		pacienteRepository.save(paciente);
 	}
 
 }
