@@ -13,6 +13,8 @@ import br.com.ifba.clinica.DTO.MedicoRequestDTO;
 import br.com.ifba.clinica.DTO.MedicoResponseDTO;
 import br.com.ifba.clinica.DTO.MedicoUpdateDTO;
 import br.com.ifba.clinica.exception.MedicoNotFound;
+import br.com.ifba.clinica.exception.ValidationInvalid;
+import br.com.ifba.clinica.model.Endereco;
 import br.com.ifba.clinica.model.Medico;
 import br.com.ifba.clinica.repository.MedicoRepository;
 
@@ -34,32 +36,46 @@ public class MedicoService {
 		return MedicoResponseDTO.converter(medicoRepository.findByActiveTrueOrderByDadosNomeAsc(PageRequest.of(page == null ? 0 : page, 10)));
 	}
 	
-	public ResponseEntity atualizarDados(Long id, MedicoUpdateDTO dados) throws MedicoNotFound{
+	public void atualizarDados(Long id, MedicoUpdateDTO dados) throws MedicoNotFound, ValidationInvalid{
+		
+		try {
+			this.validarDados(dados);
+		} catch (ValidationInvalid error) {
+			throw error;
+		}
 		
 		Optional<Medico> medico = medicoRepository.findById(id);
 		
-		if(medico.isPresent()) {
-			Medico med = medico.get();
-			med.setNome(dados.nome() == null ? med.getNome(): dados.nome());
-			med.setTelefone(dados.telefone() == null ? med.getTelefone() : dados.telefone());
-			med.setEndereco(dados.endereco() == null ? med.getEndereco() : dados.endereco());
-			return  new ResponseEntity<>(HttpStatus.ACCEPTED);
+		if(medico.isEmpty()) {
+			throw new MedicoNotFound();
 		}
 
-			throw new MedicoNotFound();
+
+		Medico med = medico.get();
+		med.setNome(dados.nome() == null ? med.getNome(): dados.nome());
+		med.setTelefone(dados.telefone() == null ? med.getTelefone() : dados.telefone());
+		med.setEndereco(dados.endereco() == null ? med.getEndereco() : new Endereco(dados.endereco()));
+		medicoRepository.save(med);
+
 	}
 	
 	
-	public ResponseEntity deleteMedico(Long id) throws MedicoNotFound {
-		Optional<Medico> medico = medicoRepository.findById(id);
-		
-		if(medico.isPresent()) {
-			medico.get().setActive(false);
-			medicoRepository.save(medico.get());
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	private void validarDados(MedicoUpdateDTO dados) throws ValidationInvalid {
+		if(!(dados.especialidade() == null) || !(dados.email() == null) || !(dados.crm() == null)) {
+			throw new ValidationInvalid();
 		}
 		
-		throw new MedicoNotFound();
+	}
+
+	public void deleteMedico(Long id) throws MedicoNotFound {
+		Optional<Medico> medico = medicoRepository.findById(id);
+		
+		if(medico.isEmpty()) {
+			throw new MedicoNotFound();
+		}
+		
+		medico.get().setActive(false);
+		medicoRepository.save(medico.get());
 	}
 
 }

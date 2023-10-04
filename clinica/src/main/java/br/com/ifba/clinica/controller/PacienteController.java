@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,42 +15,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.ifba.clinica.DTO.MedicoRequestDTO;
-import br.com.ifba.clinica.DTO.MedicoResponseDTO;
 import br.com.ifba.clinica.DTO.MedicoUpdateDTO;
-import br.com.ifba.clinica.exception.MedicoNotFound;
+import br.com.ifba.clinica.DTO.PacienteRequestDTO;
+import br.com.ifba.clinica.DTO.PacienteResponseDTO;
+import br.com.ifba.clinica.DTO.PacienteUpdateDTO;
+import br.com.ifba.clinica.exception.PacienteNotFound;
 import br.com.ifba.clinica.exception.ValidationInvalid;
-import br.com.ifba.clinica.service.MedicoService;
+import br.com.ifba.clinica.service.PacienteService;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 
 @RestController
-@RequestMapping("/medicos")
-
-public class MedicoController {
+@RequestMapping("/pacientes")
+public class PacienteController {
 	
 	@Autowired
-	 MedicoService servico;
+	 PacienteService servico;
 	
 	@PostMapping("/cadastrar")
-	public ResponseEntity<MedicoResponseDTO> cadastrarMedico(@Valid @RequestBody MedicoRequestDTO postData) {
-		MedicoResponseDTO response = servico.cadastrarMedico(postData);
-		return new ResponseEntity<MedicoResponseDTO> (response, HttpStatus.CREATED);  
+	public ResponseEntity<PacienteResponseDTO> cadastrarMedico(@Valid @RequestBody PacienteRequestDTO postData) {
+		System.out.println(postData);
+		PacienteResponseDTO response = servico.cadastrarPaciente(postData);
+		return new ResponseEntity<PacienteResponseDTO> (response, HttpStatus.CREATED);  
 	}
 	
 	@GetMapping("/listar/")
-	public ResponseEntity listaMedicos(@RequestParam(required=false) Integer page) {
+	public ResponseEntity listarPacientes(@RequestParam(required=false) Integer page) {
 		//VERIFICAR A FORMA DE PASSAR A PÁGINA
-		return new ResponseEntity<List<MedicoResponseDTO>>(servico.listarMedicos(page),HttpStatus.CREATED);
+		return new ResponseEntity<List<PacienteResponseDTO>>(servico.listarPacientes(page),HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/atualizar/{id}")
-	public ResponseEntity atualizarDados(@PathVariable Long id, @Valid @RequestBody MedicoUpdateDTO dados){
+	public ResponseEntity atualizarDados(@PathVariable Long id, @Valid @RequestBody PacienteUpdateDTO dados){
 		
 		try {
 			servico.atualizarDados(id, dados);
 			return new ResponseEntity<>(HttpStatus.ACCEPTED);
-		} catch (MedicoNotFound e) {
+		} catch (PacienteNotFound e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		  catch(ValidationInvalid error) {
@@ -62,9 +61,9 @@ public class MedicoController {
 	@DeleteMapping("/apagar/{id}")
 	public ResponseEntity deleteMedico(@PathVariable Long id) {
 		try {
-			servico.deleteMedico(id);
+			servico.deletePaciente(id);
 			return new ResponseEntity<>(HttpStatus.ACCEPTED);
-		} catch (MedicoNotFound e) {
+		} catch (PacienteNotFound e) {
 			// TODO Auto-generated catch block
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
