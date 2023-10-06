@@ -32,7 +32,6 @@ public class PacienteController {
 	
 	@PostMapping("/cadastrar")
 	public ResponseEntity<PacienteResponseDTO> cadastrarMedico(@Valid @RequestBody PacienteRequestDTO postData) {
-		System.out.println(postData);
 		PacienteResponseDTO response = servico.cadastrarPaciente(postData);
 		return new ResponseEntity<PacienteResponseDTO> (response, HttpStatus.CREATED);  
 	}

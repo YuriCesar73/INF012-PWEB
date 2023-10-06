@@ -45,9 +45,6 @@ public class Consulta {
 		
 	}
 
-
-
-
 	public Consulta(ConsultaId ids, Medico medico, Paciente paciente, LocalDateTime created_at, LocalDateTime updated_at) {
 		super();
 		this.ids = ids;
@@ -56,9 +53,6 @@ public class Consulta {
 		this.created_at = created_at;
 		this.updated_at = updated_at;
 	}
-
-
-
 
 	public Consulta(ConsultaRequestDTO data) {
 		this.ids = new ConsultaId(data.medico(), data.paciente(), data.data(), data.horario());

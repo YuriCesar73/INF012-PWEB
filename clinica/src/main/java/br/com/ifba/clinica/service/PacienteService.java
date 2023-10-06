@@ -1,6 +1,7 @@
 package br.com.ifba.clinica.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -63,6 +64,16 @@ public class PacienteService {
 		
 		paciente.setActive(false);
 		pacienteRepository.save(paciente);
+	}
+
+	public void findPaciente(Long id) throws PacienteNotFound {
+		Optional<Paciente> paciente = pacienteRepository.findByActiveTrueAndId(id);
+		if(paciente.isEmpty()) {
+			throw new PacienteNotFound();
+		}
+		
+		PacienteResponseDTO p = new PacienteResponseDTO(paciente.get());
+		
 	}
 
 }
