@@ -45,10 +45,10 @@ public class ConsultaService {
 		} catch (HorarioInvalido error) {
 			error.printStackTrace();
 		}
-		catch (MedicoNotFound error) {
+		 catch (MedicoNotFound error) {
 			error.printStackTrace();
 		}
-		catch (PacienteNotFound error) {
+		 catch (PacienteNotFound error) {
 			error.printStackTrace();
 		}
 		
@@ -56,6 +56,7 @@ public class ConsultaService {
 	}
 	
 	private void validaMedico(Long id) throws MedicoNotFound {
+		
 		try {
 			medicoService.findMedico(id);
 		} catch (MedicoNotFound e) {
