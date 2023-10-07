@@ -21,5 +21,5 @@ public interface MedicoRepository extends JpaRepository<Medico, Long>{
 	 //SELECT column FROM table
 	 //ORDER BY RAND()
 	 //LIMIT 1
-	 public Optional<Medico> findRandoMedico();
+	 //public Optional<Medico> findRandoMedico();
 } 

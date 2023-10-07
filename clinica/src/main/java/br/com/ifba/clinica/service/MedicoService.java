@@ -42,8 +42,16 @@ public class MedicoService {
 			throw error;
 		}
 		
-		Medico medico = medicoRepository.findById(id).orElseThrow(MedicoNotFound::new);
+		//Medico medico = medicoRepository.findById(id).orElseThrow(MedicoNotFound::new);
 		
+		Optional<Medico> med = medicoRepository.findByActiveTrueAndId(id);
+		if(med.isEmpty()) {
+			throw new MedicoNotFound();
+		}
+		
+		Medico medico = med.get();
+		
+		System.out.println(dados.nome());
 		medico.setNome(dados.nome() == null ? medico.getNome(): dados.nome());
 		medico.setTelefone(dados.telefone() == null ? medico.getTelefone() : dados.telefone());
 		medico.setEndereco(dados.endereco() == null ? medico.getEndereco() : new Endereco(dados.endereco()));
