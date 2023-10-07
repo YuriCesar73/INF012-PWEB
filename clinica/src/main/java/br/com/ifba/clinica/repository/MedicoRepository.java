@@ -18,8 +18,4 @@ public interface MedicoRepository extends JpaRepository<Medico, Long>{
 	 public Optional<Medico> findByActiveTrueAndId(Long id); 
 
 	 
-	 //SELECT column FROM table
-	 //ORDER BY RAND()
-	 //LIMIT 1
-	 //public Optional<Medico> findRandoMedico();
 } 

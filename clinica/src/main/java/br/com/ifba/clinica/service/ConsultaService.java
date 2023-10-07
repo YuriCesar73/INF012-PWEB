@@ -31,14 +31,19 @@ public class ConsultaService {
 	@Autowired
 	PacienteService pacienteService;
 
-	public void cadastrar(ConsultaRequestDTO data) throws DiaInvalidoParaConsulta {
+	public void cadastrar(ConsultaRequestDTO data) throws Exception {
 		
-		validarConsulta(data);
+		try {
+			validarConsulta(data);
+		} catch (DiaInvalidoParaConsulta | HorarioInvalido | MedicoNotFound | PacienteNotFound | MedicoIndisponivel
+				| JaPossuiAgendamento e) {
+			throw e;
+		}
 		Consulta consulta = new Consulta(data);
 		consultaRepository.save(consulta);
 	}
 	
-	private void validarConsulta(ConsultaRequestDTO data){
+	private void validarConsulta(ConsultaRequestDTO data) throws DiaInvalidoParaConsulta, HorarioInvalido, MedicoNotFound, PacienteNotFound, MedicoIndisponivel, JaPossuiAgendamento{
 		try {
 			validaDiaDaSemana(data.data().getDayOfWeek());
 			validaHorario(data.horario());
@@ -47,53 +52,55 @@ public class ConsultaService {
 			validaUnicaConsultaDoDiaPaciente(data.data(), data.paciente());
 			validaDisponibilidadeMedico(data.data(), data.horario(), data.medico());
 		} catch (DiaInvalidoParaConsulta e) {
-			e.printStackTrace();
+			throw e;
 		} catch (HorarioInvalido error) {
-			error.printStackTrace();
+			throw error;
 		}
 		 catch (MedicoNotFound error) {
-			error.printStackTrace();
+			throw error;
 		}
 		 catch (PacienteNotFound error) {
-			error.printStackTrace();
+			throw error;
 		}
 		 catch(JaPossuiAgendamento error) {
-			 error.printStackTrace();
+			 throw error;
 		 }
 		 catch(MedicoIndisponivel error) {
-			 error.printStackTrace();
+			 throw error;
 		 }
 	}
 	
 	private void validaDisponibilidadeMedico(LocalDate data, LocalTime horario, Long id) throws MedicoIndisponivel {
-
+		//Verifica se o médico está disponível na data e horario estabelecido
 		Optional<Consulta> consulta = consultaRepository.findByIdsDataAndIdsHoraAndIdsMedicoId(data, horario, id);
 		
-		if(consulta.isEmpty()) {
+		if(consulta.isPresent()) {
 			throw new MedicoIndisponivel();
 		}
 	}
 
 	private void validaUnicaConsultaDoDiaPaciente(LocalDate data, Long id) throws JaPossuiAgendamento {
+		//Verifica se o paciente já tem uma consulta no dia
 		Optional<Consulta> consulta = consultaRepository.findByIdsDataAndIdsPacienteId(data, id);
 		
-		if(consulta.isEmpty()) {
+		if(consulta.isPresent()) {
 			throw new JaPossuiAgendamento();
 		}
 		
 	}
 
 	private void validaMedico(Long id) throws MedicoNotFound {
-		
+		//Verifica se o médico está ativo no sistema
 		try {
-			medicoService.findMedico(id);
+			medicoService.findMedicoAtivo(id);
 		} catch (MedicoNotFound e) {
 			throw e;
 		}
 	}
 	
 	private void validaPaciente(Long id) throws PacienteNotFound {
-		pacienteService.findPaciente(id);
+		//Verifica se o paciente está ativo no sistema
+		pacienteService.findPacienteAtivo(id);
 	}
 	
 	private void validaHorario(LocalTime horario) throws HorarioInvalido {

@@ -74,7 +74,7 @@ public class PacienteService {
 		pacienteRepository.save(paciente);
 	}
 
-	public void findPaciente(Long id) throws PacienteNotFound {
+	public void findPacienteAtivo(Long id) throws PacienteNotFound {
 		Optional<Paciente> paciente = pacienteRepository.findByActiveTrueAndId(id);
 		if(paciente.isEmpty()) {
 			throw new PacienteNotFound();

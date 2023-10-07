@@ -26,7 +26,8 @@ public class ConsultaController {
 		try {
 			service.cadastrar(consulta);
 			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (DiaInvalidoParaConsulta e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 	}

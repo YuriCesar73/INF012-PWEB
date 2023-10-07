@@ -74,7 +74,7 @@ public class MedicoService {
 		medicoRepository.save(medico);
 	}
 	
-	public MedicoResponseDTO findMedico(Long id) throws MedicoNotFound {
+	public MedicoResponseDTO findMedicoAtivo(Long id) throws MedicoNotFound {
 		Optional<Medico> medico = medicoRepository.findByActiveTrueAndId(id);
 		if(medico.isEmpty()) {
 			throw new MedicoNotFound();
