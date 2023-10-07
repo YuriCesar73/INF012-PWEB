@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import br.com.ifba.clinica.DTO.ConsultaRequestDTO;
+import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -35,6 +36,7 @@ public class Consulta {
 	
 	@CreationTimestamp
 	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+	@Column(name = "CREATED_AT", updatable = false, nullable = false)
 	private LocalDateTime created_at;
 	
 	@UpdateTimestamp
