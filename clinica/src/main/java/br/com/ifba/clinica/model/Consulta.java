@@ -1,6 +1,5 @@
 package br.com.ifba.clinica.model;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -16,7 +15,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
-import jakarta.validation.constraints.Pattern;
 
 @Entity
 public class Consulta {

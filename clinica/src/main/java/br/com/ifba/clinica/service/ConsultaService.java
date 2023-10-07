@@ -2,7 +2,9 @@ package br.com.ifba.clinica.service;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Service;
 import br.com.ifba.clinica.DTO.ConsultaRequestDTO;
 import br.com.ifba.clinica.exception.DiaInvalidoParaConsulta;
 import br.com.ifba.clinica.exception.HorarioInvalido;
+import br.com.ifba.clinica.exception.JaPossuiAgendamento;
+import br.com.ifba.clinica.exception.MedicoIndisponivel;
 import br.com.ifba.clinica.exception.MedicoNotFound;
 import br.com.ifba.clinica.exception.PacienteNotFound;
 import br.com.ifba.clinica.model.Consulta;
@@ -40,6 +44,8 @@ public class ConsultaService {
 			validaHorario(data.horario());
 			validaMedico(data.medico());
 			validaPaciente(data.paciente());
+			validaUnicaConsultaDoDiaPaciente(data.data(), data.paciente());
+			validaDisponibilidadeMedico(data.data(), data.horario(), data.medico());
 		} catch (DiaInvalidoParaConsulta e) {
 			e.printStackTrace();
 		} catch (HorarioInvalido error) {
@@ -51,10 +57,32 @@ public class ConsultaService {
 		 catch (PacienteNotFound error) {
 			error.printStackTrace();
 		}
-		
-				
+		 catch(JaPossuiAgendamento error) {
+			 error.printStackTrace();
+		 }
+		 catch(MedicoIndisponivel error) {
+			 error.printStackTrace();
+		 }
 	}
 	
+	private void validaDisponibilidadeMedico(LocalDate data, LocalTime horario, Long id) throws MedicoIndisponivel {
+
+		Optional<Consulta> consulta = consultaRepository.findByIdsDataAndIdsHoraAndIdsMedicoId(data, horario, id);
+		
+		if(consulta.isEmpty()) {
+			throw new MedicoIndisponivel();
+		}
+	}
+
+	private void validaUnicaConsultaDoDiaPaciente(LocalDate data, Long id) throws JaPossuiAgendamento {
+		Optional<Consulta> consulta = consultaRepository.findByIdsDataAndIdsPacienteId(data, id);
+		
+		if(consulta.isEmpty()) {
+			throw new JaPossuiAgendamento();
+		}
+		
+	}
+
 	private void validaMedico(Long id) throws MedicoNotFound {
 		
 		try {
