@@ -46,15 +46,17 @@ public class MedicoController {
 	@PutMapping("/atualizar/{id}")
 	public ResponseEntity<?> atualizarDados(@PathVariable Long id, @Valid @RequestBody MedicoUpdateDTO dados){
 		
-		try {
-			servico.atualizarDados(id, dados);
-			return new ResponseEntity<>(HttpStatus.ACCEPTED);
-		} catch (MedicoNotFound e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		  catch(ValidationInvalid error) {
-			return new ResponseEntity<>(error.getError(), HttpStatus.BAD_REQUEST);
-		}
+		servico.atualizarDados(id, dados);
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+//		try {
+//			servico.atualizarDados(id, dados);
+//			return new ResponseEntity<>(HttpStatus.ACCEPTED);
+//		} catch (MedicoNotFound e) {
+//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//		}
+//		  catch(ValidationInvalid error) {
+//			return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+//		}
 	}
 	
 	@DeleteMapping("/apagar/{id}")
@@ -63,7 +65,6 @@ public class MedicoController {
 			servico.deleteMedico(id);
 			return new ResponseEntity<>(HttpStatus.ACCEPTED);
 		} catch (MedicoNotFound e) {
-			// TODO Auto-generated catch block
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 

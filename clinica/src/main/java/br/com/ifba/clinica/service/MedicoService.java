@@ -44,12 +44,7 @@ public class MedicoService {
 		
 		//Medico medico = medicoRepository.findById(id).orElseThrow(MedicoNotFound::new);
 		
-		Optional<Medico> med = medicoRepository.findByActiveTrueAndId(id);
-		if(med.isEmpty()) {
-			throw new MedicoNotFound();
-		}
-		
-		Medico medico = med.get();
+		Medico medico = medicoRepository.findByActiveTrueAndId(id).orElseThrow(() -> new MedicoNotFound(id));
 		
 		System.out.println(dados.nome());
 		medico.setNome(dados.nome() == null ? medico.getNome(): dados.nome());
@@ -68,7 +63,8 @@ public class MedicoService {
 	}
 
 	public void deleteMedico(Long id) throws MedicoNotFound {
-		Medico medico = medicoRepository.findById(id).orElseThrow(MedicoNotFound::new);
+		Medico medico = medicoRepository.findById(id).orElseThrow(() -> new MedicoNotFound(id));
+
 		
 		medico.setActive(false);
 		medicoRepository.save(medico);
@@ -77,7 +73,7 @@ public class MedicoService {
 	public MedicoResponseDTO findMedicoAtivo(Long id) throws MedicoNotFound {
 		Optional<Medico> medico = medicoRepository.findByActiveTrueAndId(id);
 		if(medico.isEmpty()) {
-			throw new MedicoNotFound();
+			throw new MedicoNotFound(id);
 		}
 		MedicoResponseDTO med = new MedicoResponseDTO(medico.get());
 		return med;

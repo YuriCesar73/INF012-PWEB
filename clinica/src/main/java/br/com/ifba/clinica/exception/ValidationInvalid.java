@@ -1,14 +1,9 @@
 package br.com.ifba.clinica.exception;
 
-public class ValidationInvalid extends Exception {
-	private String error;
-	Exception exc;
+public class ValidationInvalid extends RuntimeException {
 	
 	public ValidationInvalid() {
-		this.error = "Erro de validação nos dados";
+		super("Dados inválidos.");
 	} 
 
-	public String getError() {
-		return error;
-	}
 }

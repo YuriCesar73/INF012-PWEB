@@ -52,7 +52,7 @@ public class PacienteController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		  catch(ValidationInvalid error) {
-			return new ResponseEntity<>(error.getError(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	
