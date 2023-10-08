@@ -16,6 +16,7 @@ import br.com.ifba.clinica.exception.JaPossuiAgendamento;
 import br.com.ifba.clinica.exception.MedicoIndisponivel;
 import br.com.ifba.clinica.exception.MedicoNotFound;
 import br.com.ifba.clinica.exception.PacienteNotFound;
+import br.com.ifba.clinica.exception.SemMedicosDisponiveis;
 import br.com.ifba.clinica.model.Consulta;
 import br.com.ifba.clinica.repository.ConsultaRepository;
 
@@ -33,24 +34,31 @@ public class ConsultaService {
 
 	public void cadastrar(ConsultaRequestDTO data) throws Exception {
 		
+		Long id;
 		try {
-			validarConsulta(data);
+			id = validarConsulta(data);
 		} catch (DiaInvalidoParaConsulta | HorarioInvalido | MedicoNotFound | PacienteNotFound | MedicoIndisponivel
 				| JaPossuiAgendamento e) {
 			throw e;
 		}
-		Consulta consulta = new Consulta(data);
+		if(data.medico() == null) {
+			
+		}
+		
+		Consulta consulta = new Consulta(data, id);
 		consultaRepository.save(consulta);
 	}
 	
-	private void validarConsulta(ConsultaRequestDTO data) throws DiaInvalidoParaConsulta, HorarioInvalido, MedicoNotFound, PacienteNotFound, MedicoIndisponivel, JaPossuiAgendamento{
+	
+	
+	private Long validarConsulta(ConsultaRequestDTO data) throws DiaInvalidoParaConsulta, HorarioInvalido, MedicoNotFound, PacienteNotFound, MedicoIndisponivel, JaPossuiAgendamento, SemMedicosDisponiveis{
+		Long id;
 		try {
 			validaDiaDaSemana(data.data().getDayOfWeek());
 			validaHorario(data.horario());
-			validaMedico(data.medico());
 			validaPaciente(data.paciente());
 			validaUnicaConsultaDoDiaPaciente(data.data(), data.paciente());
-			validaDisponibilidadeMedico(data.data(), data.horario(), data.medico());
+			id = validaMedico(data.medico(), data.data(), data.horario());
 		} catch (DiaInvalidoParaConsulta e) {
 			throw e;
 		} catch (HorarioInvalido error) {
@@ -68,6 +76,11 @@ public class ConsultaService {
 		 catch(MedicoIndisponivel error) {
 			 throw error;
 		 }
+		 catch(SemMedicosDisponiveis error) {
+			 throw error;
+		 }
+		
+		return id;
 	}
 	
 	private void validaDisponibilidadeMedico(LocalDate data, LocalTime horario, Long id) throws MedicoIndisponivel {
@@ -89,13 +102,29 @@ public class ConsultaService {
 		
 	}
 
-	private void validaMedico(Long id) throws MedicoNotFound {
+	private Long validaMedico(Long id, LocalDate data, LocalTime horario) throws MedicoNotFound, SemMedicosDisponiveis, MedicoIndisponivel {
 		//Verifica se o médico está ativo no sistema
-		try {
-			medicoService.findMedicoAtivo(id);
-		} catch (MedicoNotFound e) {
-			throw e;
+		if(id != null) {
+			try {
+				medicoService.findMedicoAtivo(id);
+				validaDisponibilidadeMedico(data, horario, id);
+				return id;
+			} catch (MedicoNotFound | MedicoIndisponivel e) {
+				throw e;
+			}
 		}
+		else { 
+		
+			Optional<Long> idMedico = consultaRepository.findRandomMedico(data);
+			
+			if(idMedico.isEmpty()) {
+				throw new SemMedicosDisponiveis();
+			}
+			
+			return idMedico.get();
+			
+		}
+		
 	}
 	
 	private void validaPaciente(Long id) throws PacienteNotFound {
@@ -109,9 +138,10 @@ public class ConsultaService {
 		int horas = horario.getHour();
 		int minutos = horario.getMinute(); 
 		
-		 Long diferenca = Duration.between(horario, LocalTime.now()).toMinutes();
+		Long diferenca = Duration.between(horario, LocalTime.now()).toMinutes();
+
 		
-		if(horas < 7 || horas >= 19 || minutos != 0 || diferenca > 30) {
+		if(horas < 7 || horas >= 19 || minutos != 0 || diferenca < 30) {
 			throw new HorarioInvalido();
 		}
 		

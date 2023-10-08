@@ -59,6 +59,10 @@ public class Consulta {
 	}
 
 
+	public Consulta(ConsultaRequestDTO data, Long id) {
+		this.ids = new ConsultaId(id, data.paciente(), data.data(), data.horario());
+	}
+
 	public Long getMedicoId() {
 		return ids.getMedicoId();
 	}
