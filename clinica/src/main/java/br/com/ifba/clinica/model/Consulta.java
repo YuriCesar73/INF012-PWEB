@@ -12,6 +12,8 @@ import br.com.ifba.clinica.DTO.ConsultaRequestDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
@@ -40,6 +42,10 @@ public class Consulta {
 	@UpdateTimestamp
 	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
 	private LocalDateTime updated_at;
+	
+	@Column(nullable = true)
+	@Enumerated(EnumType.STRING)
+	private CancelamentoConsulta motivo;	
 	
 	public Consulta() {
 		
@@ -131,6 +137,15 @@ public class Consulta {
 	public void setUpdated_at(LocalDateTime updated_at) {
 		this.updated_at = updated_at;
 	}
+
+	public CancelamentoConsulta getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(CancelamentoConsulta status) {
+		this.motivo = status;
+	}
+	
 	
 	
 

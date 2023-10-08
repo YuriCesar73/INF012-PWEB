@@ -4,12 +4,17 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Period;
 import java.util.Optional;
 
+import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.ifba.clinica.DTO.ConsultaCancelamentoRequestDTO;
 import br.com.ifba.clinica.DTO.ConsultaRequestDTO;
+import br.com.ifba.clinica.exception.CancelamentoForaDoPrazo;
+import br.com.ifba.clinica.exception.ConsultaNaoMarcada;
 import br.com.ifba.clinica.exception.DiaInvalidoParaConsulta;
 import br.com.ifba.clinica.exception.HorarioInvalido;
 import br.com.ifba.clinica.exception.JaPossuiAgendamento;
@@ -18,6 +23,7 @@ import br.com.ifba.clinica.exception.MedicoNotFound;
 import br.com.ifba.clinica.exception.PacienteNotFound;
 import br.com.ifba.clinica.exception.SemMedicosDisponiveis;
 import br.com.ifba.clinica.model.Consulta;
+import br.com.ifba.clinica.model.CancelamentoConsulta;
 import br.com.ifba.clinica.repository.ConsultaRepository;
 
 @Service
@@ -55,7 +61,7 @@ public class ConsultaService {
 		Long id;
 		try {
 			validaDiaDaSemana(data.data().getDayOfWeek());
-			validaHorario(data.horario());
+			validaHorario(data.horario(), data.data());
 			validaPaciente(data.paciente());
 			validaUnicaConsultaDoDiaPaciente(data.data(), data.paciente());
 			id = validaMedico(data.medico(), data.data(), data.horario());
@@ -132,16 +138,27 @@ public class ConsultaService {
 		pacienteService.findPacienteAtivo(id);
 	}
 	
-	private void validaHorario(LocalTime horario) throws HorarioInvalido {
+	private void validaHorario(LocalTime horario, LocalDate data) throws HorarioInvalido {
 		
 		//Horário de funcionamento das 7 às 19. Consultas tem, exatamente, uma hora.
+		
+		LocalDate dataAtual = LocalDate.now();		
+		Period diferencaEntreDias = Period.between(dataAtual, data);
+		
+		if(diferencaEntreDias.getDays() < 1) {
+			
+			Duration diferenca = Duration.between(horario, LocalTime.now());
+			if(diferenca.toHours() < 1) {
+				if(diferenca.toMinutes() < 30) {
+					throw new HorarioInvalido();
+				}
+			}
+		}
+		
 		int horas = horario.getHour();
 		int minutos = horario.getMinute(); 
 		
-		Long diferenca = Duration.between(horario, LocalTime.now()).toMinutes();
-
-		
-		if(horas < 7 || horas >= 19 || minutos != 0 || diferenca < 30) {
+		if(horas < 7 || horas >= 19 || minutos != 0) {
 			throw new HorarioInvalido();
 		}
 		
@@ -152,6 +169,41 @@ public class ConsultaService {
 		if(dayOfWeek.equals(dayOfWeek.SUNDAY)) {
 			throw new DiaInvalidoParaConsulta();
 		}
+		
+	}
+
+
+
+	public void cancelar(ConsultaCancelamentoRequestDTO cancelamento) throws ConsultaNaoMarcada, CancelamentoForaDoPrazo {
+		Optional<Consulta> consulta = consultaRepository.findByIdsDataAndIdsPacienteId(cancelamento.data(), cancelamento.paciente());
+		
+		if(consulta.isEmpty()) {
+			throw new ConsultaNaoMarcada();
+		}
+		
+		LocalDate dataATual = LocalDate.now();
+		LocalTime horarioAtual = LocalTime.now();
+		
+		
+		Period diferencaEntreDias = Period.between(dataATual, cancelamento.data());
+		Duration diferencaEntreHoras = Duration.between(horarioAtual, cancelamento.horario());
+		
+		int diferencaDias = diferencaEntreDias.getDays();
+		Long diferencaHoras = diferencaEntreHoras.toHours();
+		
+		System.out.println("A DIFERENÇA ENTRE OS DIAS SÃO DE: " + diferencaDias);
+		
+		if(diferencaDias < 1) {
+			if(diferencaHoras < 24) {
+				throw new CancelamentoForaDoPrazo();	
+			}
+		}
+		
+		System.out.println("Diferença entre horas: " + diferencaHoras);
+		
+		consulta.get().setMotivo(cancelamento.motivo());
+		
+		consultaRepository.save(consulta.get());
 		
 	}
 
