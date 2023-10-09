@@ -39,7 +39,7 @@ public class PacienteController {
 	@GetMapping("/listar/")
 	public ResponseEntity<List<PacienteResponseDTO>> listarPacientes(@RequestParam(required=false) Integer page) {
 		//VERIFICAR A FORMA DE PASSAR A PÁGINA
-		return new ResponseEntity<List<PacienteResponseDTO>>(servico.listarPacientes(page),HttpStatus.CREATED);
+		return new ResponseEntity<List<PacienteResponseDTO>>(servico.listarPacientes(page),HttpStatus.ACCEPTED);
 	}
 	
 	@PutMapping("/atualizar/{id}")

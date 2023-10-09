@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.ifba.clinica.DTO.ConsultaCancelamentoRequestDTO;
 import br.com.ifba.clinica.DTO.ConsultaRequestDTO;
+import br.com.ifba.clinica.DTO.ConsultaResponseDTO;
 import br.com.ifba.clinica.exception.DiaInvalidoParaConsulta;
 import br.com.ifba.clinica.model.CancelamentoConsulta;
 import br.com.ifba.clinica.service.ConsultaService;
@@ -26,9 +27,9 @@ public class ConsultaController {
 	
 	
 	@PostMapping("/cadastrar")
-	public ResponseEntity<Object> cadastrarConsulta(@RequestBody @Valid ConsultaRequestDTO consulta) {
-		service.cadastrar(consulta);
-		return new ResponseEntity<>(HttpStatus.OK);
+	public ResponseEntity<ConsultaResponseDTO> cadastrarConsulta(@RequestBody @Valid ConsultaRequestDTO consulta) {
+		ConsultaResponseDTO consultaConfirmada = service.cadastrar(consulta);
+		return new ResponseEntity<ConsultaResponseDTO>(consultaConfirmada, HttpStatus.OK);
 //		try {
 //			service.cadastrar(consulta);
 //			return new ResponseEntity<>(HttpStatus.OK);
@@ -41,7 +42,7 @@ public class ConsultaController {
 	@PutMapping("/cancelar")
 	public ResponseEntity<Object> cancelarConsulta(@RequestBody ConsultaCancelamentoRequestDTO motivo) {
 		service.cancelar(motivo);
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 		
 //		try {
 //			service.cancelar(motivo);

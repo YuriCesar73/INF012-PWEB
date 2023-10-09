@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import br.com.ifba.clinica.DTO.ConsultaCancelamentoRequestDTO;
 import br.com.ifba.clinica.DTO.ConsultaRequestDTO;
+import br.com.ifba.clinica.DTO.ConsultaResponseDTO;
+import br.com.ifba.clinica.DTO.MedicoResponseDTO;
 import br.com.ifba.clinica.exception.CancelamentoForaDoPrazo;
 import br.com.ifba.clinica.exception.ConsultaNaoMarcada;
 import br.com.ifba.clinica.exception.DiaInvalidoParaConsulta;
@@ -36,7 +38,7 @@ public class ConsultaService {
 	@Autowired
 	PacienteService pacienteService;
 
-	public void cadastrar(ConsultaRequestDTO data) {
+	public ConsultaResponseDTO cadastrar(ConsultaRequestDTO data) {
 		
 		Long id;
 		id = validarConsulta(data);
@@ -53,6 +55,9 @@ public class ConsultaService {
 		
 		Consulta consulta = new Consulta(data, id);
 		consultaRepository.save(consulta);
+		MedicoResponseDTO med = medicoService.findMedicoAtivo(id);
+		return new ConsultaResponseDTO(consulta.getData(), consulta.getHora(), med.nome());
+		
 	}
 	
 	
@@ -152,10 +157,13 @@ public class ConsultaService {
 		Period diferencaEntreDias = Period.between(dataAtual, data);
 		
 		if(diferencaEntreDias.getDays() < 1) {
+			System.out.println("Dias: " + diferencaEntreDias.getDays());
 			
-			Duration diferenca = Duration.between(horario, LocalTime.now());
+			Duration diferenca = Duration.between(LocalTime.now(), horario);
 			if(diferenca.toHours() < 1) {
+				System.out.println("Horas: " + diferenca.toHours());
 				if(diferenca.toMinutes() < 30) {
+					System.out.println("Minutos: " + diferenca.toMinutes());
 					throw new HorarioInvalido();
 				}
 			}
