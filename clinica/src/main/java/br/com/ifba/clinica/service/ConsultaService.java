@@ -7,7 +7,6 @@ import java.time.LocalTime;
 import java.time.Period;
 import java.util.Optional;
 
-import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,6 @@ import br.com.ifba.clinica.exception.MedicoNotFound;
 import br.com.ifba.clinica.exception.PacienteNotFound;
 import br.com.ifba.clinica.exception.SemMedicosDisponiveis;
 import br.com.ifba.clinica.model.Consulta;
-import br.com.ifba.clinica.model.CancelamentoConsulta;
 import br.com.ifba.clinica.repository.ConsultaRepository;
 
 @Service
@@ -103,7 +101,7 @@ public class ConsultaService {
 		Optional<Consulta> consulta = consultaRepository.findByIdsDataAndIdsPacienteId(data, id);
 		
 		if(consulta.isPresent()) {
-			throw new JaPossuiAgendamento();
+			throw new JaPossuiAgendamento(data);
 		}
 		
 	}
@@ -175,11 +173,9 @@ public class ConsultaService {
 
 
 	public void cancelar(ConsultaCancelamentoRequestDTO cancelamento) throws ConsultaNaoMarcada, CancelamentoForaDoPrazo {
-		Optional<Consulta> consulta = consultaRepository.findByIdsDataAndIdsPacienteId(cancelamento.data(), cancelamento.paciente());
+		Consulta consulta = consultaRepository.findByIdsDataAndIdsPacienteId(cancelamento.data(), cancelamento.paciente())
+				            .orElseThrow(() -> new ConsultaNaoMarcada());
 		
-		if(consulta.isEmpty()) {
-			throw new ConsultaNaoMarcada();
-		}
 		
 		LocalDate dataATual = LocalDate.now();
 		LocalTime horarioAtual = LocalTime.now();
@@ -191,19 +187,16 @@ public class ConsultaService {
 		int diferencaDias = diferencaEntreDias.getDays();
 		Long diferencaHoras = diferencaEntreHoras.toHours();
 		
-		System.out.println("A DIFERENÇA ENTRE OS DIAS SÃO DE: " + diferencaDias);
 		
 		if(diferencaDias < 1) {
 			if(diferencaHoras < 24) {
 				throw new CancelamentoForaDoPrazo();	
 			}
 		}
+				
+		consulta.setMotivo(cancelamento.motivo());
 		
-		System.out.println("Diferença entre horas: " + diferencaHoras);
-		
-		consulta.get().setMotivo(cancelamento.motivo());
-		
-		consultaRepository.save(consulta.get());
+		consultaRepository.save(consulta);
 		
 	}
 

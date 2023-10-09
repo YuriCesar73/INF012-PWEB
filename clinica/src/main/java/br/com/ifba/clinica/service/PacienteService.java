@@ -1,6 +1,5 @@
 package br.com.ifba.clinica.service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +13,6 @@ import br.com.ifba.clinica.DTO.PacienteUpdateDTO;
 import br.com.ifba.clinica.exception.PacienteNotFound;
 import br.com.ifba.clinica.exception.ValidationInvalid;
 import br.com.ifba.clinica.model.Endereco;
-import br.com.ifba.clinica.model.Medico;
 import br.com.ifba.clinica.model.Paciente;
 import br.com.ifba.clinica.repository.PacienteRepository;
 
@@ -44,14 +42,7 @@ public class PacienteService {
 			throw error;
 		}
 		
-		//Paciente paciente = pacienteRepository.findById(id).orElseThrow(PacienteNotFound::new);
-		Optional<Paciente> p = pacienteRepository.findByActiveTrueAndId(id);
-		if(p.isEmpty()) {
-			throw new PacienteNotFound();
-		}
-		
-		Paciente paciente = p.get();
-		
+		Paciente paciente = pacienteRepository.findByActiveTrueAndId(id).orElseThrow(() -> new PacienteNotFound(id));
 		paciente.setNome(dados.nome() == null ? paciente.getNome(): dados.nome());
 		paciente.setTelefone(dados.telefone() == null ? paciente.getTelefone() : dados.telefone());
 		paciente.setEndereco(dados.endereco() == null ? paciente.getEndereco() : new Endereco(dados.endereco()));
@@ -68,7 +59,7 @@ public class PacienteService {
 	}
 
 	public void deletePaciente(Long id) throws PacienteNotFound {
-		Paciente paciente = pacienteRepository.findById(id).orElseThrow(PacienteNotFound::new);
+		Paciente paciente = pacienteRepository.findById(id).orElseThrow(() -> new PacienteNotFound(id));
 		
 		paciente.setActive(false);
 		pacienteRepository.save(paciente);
@@ -77,7 +68,7 @@ public class PacienteService {
 	public void findPacienteAtivo(Long id) throws PacienteNotFound {
 		Optional<Paciente> paciente = pacienteRepository.findByActiveTrueAndId(id);
 		if(paciente.isEmpty()) {
-			throw new PacienteNotFound();
+			throw new PacienteNotFound(id);
 		}
 		
 		PacienteResponseDTO p = new PacienteResponseDTO(paciente.get());

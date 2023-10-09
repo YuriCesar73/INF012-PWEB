@@ -42,7 +42,6 @@ public class MedicoService {
 			throw error;
 		}
 		
-		//Medico medico = medicoRepository.findById(id).orElseThrow(MedicoNotFound::new);
 		
 		Medico medico = medicoRepository.findByActiveTrueAndId(id).orElseThrow(() -> new MedicoNotFound(id));
 		
