@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.ifba.clinica.DTO.PacienteRequestDTO;
 import br.com.ifba.clinica.DTO.PacienteResponseDTO;
 import br.com.ifba.clinica.DTO.PacienteUpdateDTO;
-import br.com.ifba.clinica.exception.PacienteNotFound;
-import br.com.ifba.clinica.exception.ValidationInvalid;
 import br.com.ifba.clinica.service.PacienteService;
 import jakarta.validation.Valid;
 

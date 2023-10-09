@@ -2,7 +2,6 @@ package br.com.ifba.clinica.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.ifba.clinica.DTO.ConsultaCancelamentoRequestDTO;
 import br.com.ifba.clinica.DTO.ConsultaRequestDTO;
 import br.com.ifba.clinica.DTO.ConsultaResponseDTO;
-import br.com.ifba.clinica.exception.DiaInvalidoParaConsulta;
-import br.com.ifba.clinica.model.CancelamentoConsulta;
 import br.com.ifba.clinica.service.ConsultaService;
 import jakarta.validation.Valid;
 
