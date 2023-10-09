@@ -36,7 +36,7 @@ public class ConsultaService {
 	@Autowired
 	PacienteService pacienteService;
 
-	public void cadastrar(ConsultaRequestDTO data) throws Exception {
+	public void cadastrar(ConsultaRequestDTO data) {
 		
 		Long id;
 		id = validarConsulta(data);
