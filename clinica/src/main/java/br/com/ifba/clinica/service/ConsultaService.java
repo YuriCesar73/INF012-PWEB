@@ -39,14 +39,16 @@ public class ConsultaService {
 	public void cadastrar(ConsultaRequestDTO data) throws Exception {
 		
 		Long id;
-		try {
-			id = validarConsulta(data);
-		} catch (DiaInvalidoParaConsulta | HorarioInvalido | MedicoNotFound | PacienteNotFound | MedicoIndisponivel
-				| JaPossuiAgendamento e) {
-			throw e;
-		}
+		id = validarConsulta(data);
+//		try {
+//			id = validarConsulta(data);
+//		} catch (DiaInvalidoParaConsulta | HorarioInvalido | MedicoNotFound | PacienteNotFound | MedicoIndisponivel
+//				| JaPossuiAgendamento e) {
+//			throw e;
+//		}
+		
 		if(data.medico() == null) {
-			
+			id = consultaRepository.findRandomMedico(data.data()).orElseThrow(() -> new SemMedicosDisponiveis());
 		}
 		
 		Consulta consulta = new Consulta(data, id);
@@ -57,33 +59,39 @@ public class ConsultaService {
 	
 	private Long validarConsulta(ConsultaRequestDTO data) throws DiaInvalidoParaConsulta, HorarioInvalido, MedicoNotFound, PacienteNotFound, MedicoIndisponivel, JaPossuiAgendamento, SemMedicosDisponiveis{
 		Long id;
-		try {
-			validaDiaDaSemana(data.data().getDayOfWeek());
-			validaHorario(data.horario(), data.data());
-			validaPaciente(data.paciente());
-			validaUnicaConsultaDoDiaPaciente(data.data(), data.paciente());
-			id = validaMedico(data.medico(), data.data(), data.horario());
-		} catch (DiaInvalidoParaConsulta e) {
-			throw e;
-		} catch (HorarioInvalido error) {
-			throw error;
-		}
-		 catch (MedicoNotFound error) {
-			throw error;
-		}
-		 catch (PacienteNotFound error) {
-			throw error;
-		}
-		 catch(JaPossuiAgendamento error) {
-			 throw error;
-		 }
-		 catch(MedicoIndisponivel error) {
-			 throw error;
-		 }
-		 catch(SemMedicosDisponiveis error) {
-			 throw error;
-		 }
+		validaDiaDaSemana(data.data().getDayOfWeek());
+		validaHorario(data.horario(), data.data());
+		validaPaciente(data.paciente());
+		validaUnicaConsultaDoDiaPaciente(data.data(), data.paciente());
+		id = validaMedico(data.medico(), data.data(), data.horario());
 		
+//		try {
+//			validaDiaDaSemana(data.data().getDayOfWeek());
+//			validaHorario(data.horario(), data.data());
+//			validaPaciente(data.paciente());
+//			validaUnicaConsultaDoDiaPaciente(data.data(), data.paciente());
+//			id = validaMedico(data.medico(), data.data(), data.horario());
+//		} catch (DiaInvalidoParaConsulta e) {
+//			throw e;
+//		} catch (HorarioInvalido error) {
+//			throw error;
+//		}
+//		 catch (MedicoNotFound error) {
+//			throw error;
+//		}
+//		 catch (PacienteNotFound error) {
+//			throw error;
+//		}
+//		 catch(JaPossuiAgendamento error) {
+//			 throw error;
+//		 }
+//		 catch(MedicoIndisponivel error) {
+//			 throw error;
+//		 }
+//		 catch(SemMedicosDisponiveis error) {
+//			 throw error;
+//		 }
+//		
 		return id;
 	}
 	

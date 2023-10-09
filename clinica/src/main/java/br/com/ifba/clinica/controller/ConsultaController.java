@@ -37,12 +37,15 @@ public class ConsultaController {
 	
 	@PutMapping("/cancelar")
 	public ResponseEntity<Object> cancelarConsulta(@RequestBody ConsultaCancelamentoRequestDTO motivo) {
-		try {
-			service.cancelar(motivo);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
-		}
+		service.cancelar(motivo);
+		return new ResponseEntity<>(HttpStatus.OK);
+		
+//		try {
+//			service.cancelar(motivo);
+//			return new ResponseEntity<>(HttpStatus.OK);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+//		}
 	}
 }
