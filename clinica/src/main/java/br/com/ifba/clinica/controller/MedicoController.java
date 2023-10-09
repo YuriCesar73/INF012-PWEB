@@ -61,12 +61,15 @@ public class MedicoController {
 	
 	@DeleteMapping("/apagar/{id}")
 	public ResponseEntity<?> deleteMedico(@PathVariable Long id) {
-		try {
-			servico.deleteMedico(id);
-			return new ResponseEntity<>(HttpStatus.ACCEPTED);
-		} catch (MedicoNotFound e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+		servico.deleteMedico(id);
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+		
+//		try {
+//			servico.deleteMedico(id);
+//			return new ResponseEntity<>(HttpStatus.ACCEPTED);
+//		} catch (MedicoNotFound e) {
+//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//		}
 
 	}
 		

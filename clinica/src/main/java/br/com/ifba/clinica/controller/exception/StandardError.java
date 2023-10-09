@@ -5,7 +5,6 @@ import java.time.Instant;
 
 public class StandardError implements Serializable{
 	
-
 	private Instant timestamp;
 	private Integer status;
 	private String error;
