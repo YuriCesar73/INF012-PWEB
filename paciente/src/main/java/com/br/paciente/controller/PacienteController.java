@@ -41,6 +41,11 @@ public class PacienteController {
 		return new ResponseEntity<List<PacienteResponseDTO>>(servico.listarPacientes(page),HttpStatus.ACCEPTED);
 	}
 	
+	@GetMapping("/listar/{id}")
+	public ResponseEntity<PacienteResponseDTO> getPaciente(@PathVariable Long id) {
+		return new ResponseEntity<PacienteResponseDTO>(servico.getPaciente(id),HttpStatus.ACCEPTED);
+	}
+	
 	@PutMapping("/atualizar/{id}")
 	public ResponseEntity<?> atualizarDados(@PathVariable Long id, @Valid @RequestBody PacienteUpdateDTO dados){
 		

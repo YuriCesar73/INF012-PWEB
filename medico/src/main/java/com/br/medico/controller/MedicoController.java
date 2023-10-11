@@ -42,21 +42,17 @@ public class MedicoController {
 		return new ResponseEntity<List<MedicoResponseDTO>>(servico.listarMedicos(page),HttpStatus.OK);
 	}
 	
+	@GetMapping("/listar/{id}")
+	public ResponseEntity<MedicoResponseDTO> listaMedicos(@PathVariable Long id) {
+		return new ResponseEntity<MedicoResponseDTO>(servico.getMedico(id),HttpStatus.OK);
+	}
+	
 	@PutMapping("/atualizar/{id}")
 	public ResponseEntity<?> atualizarDados(@PathVariable Long id, @Valid @RequestBody MedicoUpdateDTO dados){
 		System.out.println(id);
 		
 		servico.atualizarDados(id, dados);
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
-//		try {
-//			servico.atualizarDados(id, dados);
-//			return new ResponseEntity<>(HttpStatus.ACCEPTED);
-//		} catch (MedicoNotFound e) {
-//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//		}
-//		  catch(ValidationInvalid error) {
-//			return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-//		}
 	}
 	
 	@DeleteMapping("/apagar/{id}")

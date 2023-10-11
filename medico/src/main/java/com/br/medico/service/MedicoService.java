@@ -34,6 +34,12 @@ public class MedicoService {
 		return MedicoResponseDTO.converter(medicoRepository.findByActiveTrueOrderByDadosNomeAsc(PageRequest.of(page == null ? 0 : page, 10)));
 	}
 	
+	public MedicoResponseDTO getMedico(Long id){
+		Medico medico = medicoRepository.findByActiveTrueAndId(id).orElseThrow(() -> new MedicoNotFound(id));
+		return new MedicoResponseDTO(medico);
+		
+		
+	}
 	public void atualizarDados(Long id, MedicoUpdateDTO dados) throws MedicoNotFound, ValidationInvalid{
 		
 		try {

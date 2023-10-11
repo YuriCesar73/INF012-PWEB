@@ -33,6 +33,11 @@ public class PacienteService {
 		return PacienteResponseDTO.converter(pacienteRepository.findByActiveTrueOrderByDadosNomeAsc(PageRequest.of(page == null ? 0 : page, 10)));
 	}
 	
+	public PacienteResponseDTO getPaciente(Long id) {
+		Paciente paciente = pacienteRepository.findByActiveTrueAndId(id).orElseThrow(() -> new PacienteNotFound(id));
+		return new PacienteResponseDTO(paciente);
+	}
+	
 	public void atualizarDados(Long id, PacienteUpdateDTO dados) throws PacienteNotFound, ValidationInvalid{
 		
 		try {
