@@ -2,10 +2,12 @@ package com.br.consulta.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.br.consulta.clients.MedicoClient;
 import com.br.consulta.clients.PacienteClient;
+import com.br.consulta.clients.dto.MedicoResponseDTO;
 import com.br.consulta.dto.ConsultaRequestDTO;
 import com.br.consulta.dto.ConsultaResponseDTO;
 import com.br.consulta.model.Consulta;
@@ -25,7 +27,8 @@ public class ConsultaService {
 	PacienteClient pacienteClient;
 
 	public ConsultaResponseDTO cadastrar(ConsultaRequestDTO data) {
-		 medicoClient.encontrarMedicoPorId(data.medico());
+		ResponseEntity<MedicoResponseDTO> medico = medicoClient.encontrarMedicoPorId(data.medico());
+		System.out.println(medico.getBody());
 		pacienteClient.encontrarPacientePorId(data.paciente()); 
 		
 		Consulta consulta = new Consulta(data);
