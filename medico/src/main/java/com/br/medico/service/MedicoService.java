@@ -36,7 +36,6 @@ public class MedicoService {
 	
 	public MedicoResponseDTO getMedico(Long id){
 		Medico medico = medicoRepository.findByActiveTrueAndId(id).orElseThrow(() -> new MedicoNotFound(id));
-		System.out.println("MEDICO: " + medico.toString());
 		return new MedicoResponseDTO(medico);
 		
 		

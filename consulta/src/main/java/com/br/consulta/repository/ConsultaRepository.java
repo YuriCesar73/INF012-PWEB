@@ -15,6 +15,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long>{
 
 	Optional<Consulta> findByIdsDataAndIdsPaciente(LocalDate data, Long id);
 	
-	Optional<Consulta> findByIdsDataAndIdsHorarioAndIdsMedico(LocalDate data, LocalTime horario, Long id); 
+	Optional<Consulta> findByIdsDataAndIdsHorarioAndIdsMedico(LocalDate data, LocalTime horario, Long id);
+
 	 
 }
