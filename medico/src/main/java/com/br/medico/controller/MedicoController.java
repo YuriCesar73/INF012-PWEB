@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.br.medico.dto.MedicoRequestDTO;
 import com.br.medico.dto.MedicoResponseDTO;
+import com.br.medico.dto.MedicoResponseToMs;
 import com.br.medico.dto.MedicoUpdateDTO;
 import com.br.medico.service.MedicoService;
 
@@ -45,6 +46,11 @@ public class MedicoController {
 	@GetMapping("/listar/{id}")
 	public ResponseEntity<MedicoResponseDTO> listaMedicos(@PathVariable Long id) {
 		return new ResponseEntity<MedicoResponseDTO>(servico.getMedico(id),HttpStatus.OK);
+	}
+	
+	@GetMapping("/listar/all")
+	public ResponseEntity<List<MedicoResponseToMs>> listAll() {
+		return new ResponseEntity<List<MedicoResponseToMs>>(servico.listaTodosMedicos(), HttpStatus.OK);
 	}
 	
 	@PutMapping("/atualizar/{id}")

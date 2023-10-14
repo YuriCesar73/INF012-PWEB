@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 
 import com.br.medico.dto.MedicoRequestDTO;
 import com.br.medico.dto.MedicoResponseDTO;
+import com.br.medico.dto.MedicoResponseToMs;
 import com.br.medico.dto.MedicoUpdateDTO;
 import com.br.medico.exception.MedicoNotFound;
 import com.br.medico.exception.ValidationInvalid;
 import com.br.medico.model.Endereco;
+import com.br.medico.model.Especialidade;
 import com.br.medico.model.Medico;
 import com.br.medico.repository.MedicoRepository;
 
@@ -32,6 +34,11 @@ public class MedicoService {
 	public List<MedicoResponseDTO> listarMedicos(Integer page){
 		
 		return MedicoResponseDTO.converter(medicoRepository.findByActiveTrueOrderByDadosNomeAsc(PageRequest.of(page == null ? 0 : page, 10)));
+	}
+	
+	public List<MedicoResponseToMs> listaTodosMedicos(){
+		return MedicoResponseToMs.converter(medicoRepository.findByActiveTrueOrderByDadosNomeAsc());
+		
 	}
 	
 	public MedicoResponseDTO getMedico(Long id){

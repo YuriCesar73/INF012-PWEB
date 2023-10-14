@@ -6,15 +6,18 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.br.consulta.clients.MedicoClient;
 import com.br.consulta.clients.PacienteClient;
 import com.br.consulta.clients.dto.MedicoResponseDTO;
+import com.br.consulta.clients.dto.MedicoResponseWithIdDTO;
 import com.br.consulta.clients.dto.PacienteResponseDTO;
 import com.br.consulta.dto.ConsultaRequestDTO;
 import com.br.consulta.dto.ConsultaResponseDTO;
@@ -61,10 +64,31 @@ public class ConsultaService {
 	
 	private Long validaMedico(Long id, LocalDate data, LocalTime horario) {
 		//Verifica se o médico está ativo no sistema
-		MedicoResponseDTO medico =  medicoClient.encontrarMedicoPorId(id).getBody();
-		validaDisponibilidadeMedico(data, horario, id);
+		Long novoId = null;
+		Boolean achouMedico = false;
+		if(id != null) {
+			MedicoResponseDTO medico =  medicoClient.encontrarMedicoPorId(id).getBody();
+			validaDisponibilidadeMedico(data, horario, id);
+			return id;
+		}
+		else {
+			List<MedicoResponseWithIdDTO> medicos = medicoClient.listaTodosMedicos().getBody();
+			
+			for (MedicoResponseWithIdDTO medicoResponseWithIdDTO : medicos) {
+				try {
+				achouMedico = validaDisponibilidadeMedico(data, horario,medicoResponseWithIdDTO.id());
+				if(achouMedico) {
+					novoId = medicoResponseWithIdDTO.id();
+					break;
+				}
+				}
+				catch (HttpClientErrorException e) {
+					
+				}
+			}
+		}
 		
-		return id;		
+		return novoId;		
 	}
 	
 	private void validaPaciente(Long id) {
@@ -73,13 +97,15 @@ public class ConsultaService {
 	}
 	
 	
-	private void validaDisponibilidadeMedico(LocalDate data, LocalTime horario, Long id) throws MedicoIndisponivel {
+	private Boolean validaDisponibilidadeMedico(LocalDate data, LocalTime horario, Long id) throws MedicoIndisponivel {
 		//Verifica se o médico está disponível na data e horario estabelecido
 		Optional<Consulta> consulta = consultaRepository.findByIdsDataAndIdsHorarioAndIdsMedico(data, horario, id);
 		
 		if(consulta.isPresent()) {
 			throw new MedicoIndisponivel();
 		}
+		
+		return true;
 	}
 	
 	private void validaUnicaConsultaDoDiaPaciente(LocalDate data, Long id) throws JaPossuiAgendamento {
