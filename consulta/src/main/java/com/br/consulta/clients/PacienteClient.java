@@ -12,6 +12,4 @@ import com.br.consulta.clients.dto.PacienteResponseDTO;
 public interface PacienteClient {
 	@RequestMapping(method = RequestMethod.GET, value = "/pacientes/listar/{id}")
 	public ResponseEntity<PacienteResponseDTO> encontrarPacientePorId(@PathVariable Long id);
-	
-
 }

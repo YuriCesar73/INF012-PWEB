@@ -12,12 +12,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import com.br.consulta.clients.MedicoClient;
 import com.br.consulta.clients.PacienteClient;
 import com.br.consulta.clients.dto.MedicoResponseDTO;
-import com.br.consulta.clients.dto.MedicoResponseWithIdDTO;
+import com.br.consulta.clients.dto.MedicoAleatorioDTO;
 import com.br.consulta.clients.dto.PacienteResponseDTO;
 import com.br.consulta.dto.ConsultaRequestDTO;
 import com.br.consulta.dto.ConsultaResponseDTO;
@@ -25,8 +24,11 @@ import com.br.consulta.exception.DiaInvalidoParaConsulta;
 import com.br.consulta.exception.HorarioInvalido;
 import com.br.consulta.exception.JaPossuiAgendamento;
 import com.br.consulta.exception.MedicoIndisponivel;
+import com.br.consulta.exception.SemMedicosDisponiveis;
 import com.br.consulta.model.Consulta;
 import com.br.consulta.repository.ConsultaRepository;
+
+import feign.FeignException.FeignClientException;
 
 
 @Service
@@ -42,24 +44,26 @@ public class ConsultaService {
 	PacienteClient pacienteClient;
 
 	public ConsultaResponseDTO cadastrar(ConsultaRequestDTO data) {
+		Long id;
+		id = validarConsulta(data);
 		
-		validarConsulta(data);
-		
-		MedicoResponseDTO medico = medicoClient.encontrarMedicoPorId(data.medico()).getBody();
+		MedicoResponseDTO medico = medicoClient.encontrarMedicoPorId(id).getBody();
 		PacienteResponseDTO paciente = pacienteClient.encontrarPacientePorId(data.paciente()).getBody(); 
 				
-		Consulta consulta = new Consulta(data);
+		Consulta consulta = new Consulta(data, id);
 		consultaRepository.save(consulta);
 		return new ConsultaResponseDTO(consulta.getData(), consulta.getHorario(), medico.nome());
 		
 	}
 
-	private void validarConsulta(ConsultaRequestDTO data) {
+	private Long validarConsulta(ConsultaRequestDTO data) {
 		validaDiaDaSemana(data.data().getDayOfWeek());
 		validaHorario(data.horario(), data.data());
 		validaPaciente(data.paciente());
-		validaMedico(data.medico(), data.data(), data.horario());
+		Long id = validaMedico(data.medico(), data.data(), data.horario());
 		validaUnicaConsultaDoDiaPaciente(data.data(), data.paciente());
+		
+		return id;
 	}
 	
 	private Long validaMedico(Long id, LocalDate data, LocalTime horario) {
@@ -72,33 +76,43 @@ public class ConsultaService {
 			return id;
 		}
 		else {
-			List<MedicoResponseWithIdDTO> medicos = medicoClient.listaTodosMedicos().getBody();
+			List<MedicoAleatorioDTO> medicos = medicoClient.listaTodosMedicos().getBody();
 			
-			for (MedicoResponseWithIdDTO medicoResponseWithIdDTO : medicos) {
+			for (MedicoAleatorioDTO med : medicos) {
 				try {
-				achouMedico = validaDisponibilidadeMedico(data, horario,medicoResponseWithIdDTO.id());
-				if(achouMedico) {
-					novoId = medicoResponseWithIdDTO.id();
+					validaDisponibilidadeMedico(data, horario, med.id());
+					achouMedico = true;
+					novoId = med.id();
 					break;
 				}
-				}
-				catch (HttpClientErrorException e) {
+				catch (MedicoIndisponivel e) {
 					
 				}
+				
+				
+			}
+			
+			if(!achouMedico) {
+				throw new SemMedicosDisponiveis();
 			}
 		}
-		
-		return novoId;		
+				return novoId;		
 	}
 	
 	private void validaPaciente(Long id) {
 		//Verifica se o paciente está ativo no sistema
-		pacienteClient.encontrarPacientePorId(id);
+		try {
+		ResponseEntity<PacienteResponseDTO> p = pacienteClient.encontrarPacientePorId(id);
+		}
+		catch (FeignClientException e) {
+			
+		}
 	}
 	
 	
 	private Boolean validaDisponibilidadeMedico(LocalDate data, LocalTime horario, Long id) throws MedicoIndisponivel {
 		//Verifica se o médico está disponível na data e horario estabelecido
+		
 		Optional<Consulta> consulta = consultaRepository.findByIdsDataAndIdsHorarioAndIdsMedico(data, horario, id);
 		
 		if(consulta.isPresent()) {

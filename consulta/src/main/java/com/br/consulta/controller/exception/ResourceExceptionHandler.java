@@ -11,7 +11,9 @@ import com.br.consulta.exception.DiaInvalidoParaConsulta;
 import com.br.consulta.exception.HorarioInvalido;
 import com.br.consulta.exception.JaPossuiAgendamento;
 import com.br.consulta.exception.MedicoIndisponivel;
+import com.br.consulta.exception.SemMedicosDisponiveis;
 
+import feign.FeignException.FeignClientException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
@@ -42,6 +44,14 @@ public class ResourceExceptionHandler {
 		return ResponseEntity.status(status).body(err);
 	}
 	
+	@ExceptionHandler(FeignClientException.class)
+	public ResponseEntity<StandardError> errorClient(FeignClientException e, HttpServletRequest request){
+		String error = "Erro emitido pelo micro-serviço";
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getLocalizedMessage(), request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
+	
 	@ExceptionHandler(MedicoIndisponivel.class)
 	public ResponseEntity<StandardError> medicoIndisponivel(MedicoIndisponivel e, HttpServletRequest request){
 		String error = "Médico já tem consulta na data e horário escolhidos";
@@ -66,12 +76,12 @@ public class ResourceExceptionHandler {
 		return ResponseEntity.status(status).body(err);
 	}
 	
-//	@ExceptionHandler(SemMedicosDisponiveis.class)
-//	public ResponseEntity<StandardError> semMedicosDisponiveis(SemMedicosDisponiveis e, HttpServletRequest request){
-//		String error = "Não há médicos disponíveis para a data selecionada";
-//		HttpStatus status = HttpStatus.NOT_FOUND;
-//		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
-//		return ResponseEntity.status(status).body(err);
-//	}
+	@ExceptionHandler(SemMedicosDisponiveis.class)
+	public ResponseEntity<StandardError> semMedicosDisponiveis(SemMedicosDisponiveis e, HttpServletRequest request){
+		String error = "Não há médicos disponíveis para a data selecionada";
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
 	
 }

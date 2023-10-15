@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.br.consulta.clients.dto.MedicoResponseDTO;
-import com.br.consulta.clients.dto.MedicoResponseWithIdDTO;
+import com.br.consulta.clients.dto.MedicoAleatorioDTO;
 
 @FeignClient("medico-ms")
 public interface MedicoClient {
@@ -17,7 +17,7 @@ public interface MedicoClient {
 	public ResponseEntity<MedicoResponseDTO> encontrarMedicoPorId(@PathVariable Long id);
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/medicos/listar/all")
-	public ResponseEntity<List<MedicoResponseWithIdDTO>> listaTodosMedicos();
+	public ResponseEntity<List<MedicoAleatorioDTO>> listaTodosMedicos();
 
 }
 
