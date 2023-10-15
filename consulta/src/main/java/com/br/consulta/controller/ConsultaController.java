@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.br.consulta.dto.ConsultaCancelamentoRequestDTO;
 import com.br.consulta.dto.ConsultaRequestDTO;
 import com.br.consulta.dto.ConsultaResponseDTO;
 import com.br.consulta.service.ConsultaService;
@@ -36,9 +37,9 @@ public class ConsultaController {
 //		}
 	}
 	
-//	@PutMapping("/cancelar")
-//	public ResponseEntity<Object> cancelarConsulta(@RequestBody ConsultaCancelamentoRequestDTO motivo) {
-//		service.cancelar(motivo);
-//		return new ResponseEntity<>(HttpStatus.ACCEPTED);
-//	}
+	@PutMapping("/cancelar")
+	public ResponseEntity<Object> cancelarConsulta(@RequestBody ConsultaCancelamentoRequestDTO motivo) {
+		service.cancelar(motivo);
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+	}
 }

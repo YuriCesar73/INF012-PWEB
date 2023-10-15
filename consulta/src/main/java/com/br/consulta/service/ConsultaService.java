@@ -18,8 +18,11 @@ import com.br.consulta.clients.PacienteClient;
 import com.br.consulta.clients.dto.MedicoResponseDTO;
 import com.br.consulta.clients.dto.MedicoAleatorioDTO;
 import com.br.consulta.clients.dto.PacienteResponseDTO;
+import com.br.consulta.dto.ConsultaCancelamentoRequestDTO;
 import com.br.consulta.dto.ConsultaRequestDTO;
 import com.br.consulta.dto.ConsultaResponseDTO;
+import com.br.consulta.exception.CancelamentoForaDoPrazo;
+import com.br.consulta.exception.ConsultaNaoMarcada;
 import com.br.consulta.exception.DiaInvalidoParaConsulta;
 import com.br.consulta.exception.HorarioInvalido;
 import com.br.consulta.exception.JaPossuiAgendamento;
@@ -165,5 +168,34 @@ public class ConsultaService {
 		}
 		
 	}
+
+	public void cancelar(ConsultaCancelamentoRequestDTO cancelamento) throws ConsultaNaoMarcada, CancelamentoForaDoPrazo {
+		Consulta consulta = consultaRepository.findByIdsDataAndIdsPaciente(cancelamento.data(), cancelamento.paciente())
+				            .orElseThrow(() -> new ConsultaNaoMarcada());
+		
+		
+		LocalDate dataATual = LocalDate.now();
+		LocalTime horarioAtual = LocalTime.now();
+		
+		
+		Period diferencaEntreDias = Period.between(dataATual, cancelamento.data());
+		Duration diferencaEntreHoras = Duration.between(horarioAtual, cancelamento.horario());
+		
+		int diferencaDias = diferencaEntreDias.getDays();
+		Long diferencaHoras = diferencaEntreHoras.toHours();
+		
+		
+		if(diferencaDias < 1) {
+			if(diferencaHoras < 24) {
+				throw new CancelamentoForaDoPrazo();	
+			}
+		}
+				
+		consulta.setMotivo(cancelamento.motivo());
+		
+		consultaRepository.save(consulta);
+		
+	}
+
 	
 }
