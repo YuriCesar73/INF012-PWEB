@@ -28,13 +28,6 @@ public class ConsultaController {
 	public ResponseEntity<ConsultaResponseDTO> cadastrarConsulta(@RequestBody @Valid ConsultaRequestDTO consulta) {
 		ConsultaResponseDTO consultaConfirmada = service.cadastrar(consulta);
 		return new ResponseEntity<ConsultaResponseDTO>(consultaConfirmada, HttpStatus.OK);
-//		try {
-//			service.cadastrar(consulta);
-//			return new ResponseEntity<>(HttpStatus.OK);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-//		}
 	}
 	
 	@PutMapping("/cancelar")

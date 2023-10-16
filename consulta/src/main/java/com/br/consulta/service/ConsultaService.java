@@ -13,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.br.consulta.clients.EmailClient;
 import com.br.consulta.clients.MedicoClient;
 import com.br.consulta.clients.PacienteClient;
 import com.br.consulta.clients.dto.MedicoResponseDTO;
+import com.br.consulta.clients.dto.EmailDto;
 import com.br.consulta.clients.dto.MedicoAleatorioDTO;
 import com.br.consulta.clients.dto.PacienteResponseDTO;
 import com.br.consulta.dto.ConsultaCancelamentoRequestDTO;
@@ -45,6 +47,9 @@ public class ConsultaService {
 	
 	@Autowired
 	PacienteClient pacienteClient;
+	
+	@Autowired
+	EmailClient emailClient;
 
 	public ConsultaResponseDTO cadastrar(ConsultaRequestDTO data) {
 		Long id;
@@ -55,6 +60,9 @@ public class ConsultaService {
 				
 		Consulta consulta = new Consulta(data, id);
 		consultaRepository.save(consulta);
+		emailClient.enviarEmail(new EmailDto(paciente));
+//		EmailDto email = new EmailDto(paciente);
+//		System.out.println("\n\n\n\n\n\nEmail: " + email.mailFrom());
 		return new ConsultaResponseDTO(consulta.getData(), consulta.getHorario(), medico.nome());
 		
 	}
