@@ -61,8 +61,6 @@ public class ConsultaService {
 		Consulta consulta = new Consulta(data, id);
 		consultaRepository.save(consulta);
 		emailClient.enviarEmail(new EmailDto(paciente));
-//		EmailDto email = new EmailDto(paciente);
-//		System.out.println("\n\n\n\n\n\nEmail: " + email.mailFrom());
 		return new ConsultaResponseDTO(consulta.getData(), consulta.getHorario(), medico.nome());
 		
 	}
@@ -202,8 +200,10 @@ public class ConsultaService {
 		consulta.setMotivo(cancelamento.motivo());
 		
 		consultaRepository.save(consulta);
+
+		PacienteResponseDTO paciente = pacienteClient.encontrarPacientePorId(cancelamento.paciente()).getBody(); 
+		emailClient.enviarEmail(new EmailDto(paciente, cancelamento));
 		
 	}
-
 	
 }
