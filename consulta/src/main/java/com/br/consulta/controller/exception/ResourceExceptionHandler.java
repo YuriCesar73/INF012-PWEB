@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.br.consulta.exception.CancelamentoForaDoPrazo;
+import com.br.consulta.exception.ConsultaNaoMarcada;
 import com.br.consulta.exception.DiaInvalidoParaConsulta;
 import com.br.consulta.exception.HorarioInvalido;
 import com.br.consulta.exception.JaPossuiAgendamento;
@@ -20,21 +22,21 @@ import jakarta.servlet.http.HttpServletRequest;
 public class ResourceExceptionHandler {
 	
 	
-//	@ExceptionHandler(ConsultaNaoMarcada.class)
-//	public ResponseEntity<StandardError> consultaNaoMarcada(ConsultaNaoMarcada e, HttpServletRequest request){
-//		String error = "Essa consulta não foi encontrada na data e horário inseridos";
-//		HttpStatus status = HttpStatus.NOT_FOUND;
-//		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
-//		return ResponseEntity.status(status).body(err);
-//	}
+	@ExceptionHandler(ConsultaNaoMarcada.class)
+	public ResponseEntity<StandardError> consultaNaoMarcada(ConsultaNaoMarcada e, HttpServletRequest request){
+		String error = "Essa consulta não foi encontrada na data e horário inseridos";
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
 	
-//	@ExceptionHandler(CancelamentoForaDoPrazo.class)
-//	public ResponseEntity<StandardError> cancelamentoForaDoPrazo(CancelamentoForaDoPrazo e, HttpServletRequest request){
-//		String error = "O cancelamento foi feito em um período menor que 24 horas";
-//		HttpStatus status = HttpStatus.NOT_ACCEPTABLE;
-//		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
-//		return ResponseEntity.status(status).body(err);
-//	}
+	@ExceptionHandler(CancelamentoForaDoPrazo.class)
+	public ResponseEntity<StandardError> cancelamentoForaDoPrazo(CancelamentoForaDoPrazo e, HttpServletRequest request){
+		String error = "O cancelamento foi feito em um período menor que 24 horas";
+		HttpStatus status = HttpStatus.NOT_ACCEPTABLE;
+		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
 	
 	@ExceptionHandler(JaPossuiAgendamento.class)
 	public ResponseEntity<StandardError> jaPossuiAgendamento(JaPossuiAgendamento e, HttpServletRequest request){
