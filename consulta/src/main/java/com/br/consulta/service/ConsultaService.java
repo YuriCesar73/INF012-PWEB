@@ -9,6 +9,7 @@ import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,10 @@ public class ConsultaService {
 	
 	@Autowired
 	EmailClient emailClient;
+	
+	
+	 @Autowired
+	 private RabbitTemplate rabbitTemplate;
 
 	public ConsultaResponseDTO cadastrar(ConsultaRequestDTO data) {
 		Long id;
@@ -60,7 +65,8 @@ public class ConsultaService {
 				
 		Consulta consulta = new Consulta(data, id);
 		consultaRepository.save(consulta);
-		emailClient.enviarEmail(new EmailDto(paciente));
+//		emailClient.enviarEmail(new EmailDto(paciente));
+		rabbitTemplate.convertAndSend("email_enviar.exchange","", new EmailDto(paciente));
 		return new ConsultaResponseDTO(consulta.getData(), consulta.getHorario(), medico.nome());
 		
 	}
@@ -148,6 +154,12 @@ public class ConsultaService {
 		LocalDate dataAtual = LocalDate.now();		
 		Period diferencaEntreDias = Period.between(dataAtual, data);
 		
+		//Gerar nova exception
+		if(data.isBefore(dataAtual)) {
+			throw new HorarioInvalido();
+		}
+		
+		
 		if(diferencaEntreDias.getDays() < 1) {
 			
 			Duration diferenca = Duration.between(LocalTime.now(), horario);
@@ -202,7 +214,8 @@ public class ConsultaService {
 		consultaRepository.save(consulta);
 
 		PacienteResponseDTO paciente = pacienteClient.encontrarPacientePorId(cancelamento.paciente()).getBody(); 
-		emailClient.enviarEmail(new EmailDto(paciente, cancelamento));
+		//emailClient.enviarEmail(new EmailDto(paciente, cancelamento));
+		rabbitTemplate.convertAndSend("email_enviar.exchange","", new EmailDto(paciente, cancelamento));
 		
 	}
 	
