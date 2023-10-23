@@ -47,7 +47,7 @@ public class MedicoService {
 		
 		
 	}
-	public void atualizarDados(Long id, MedicoUpdateDTO dados) throws MedicoNotFound, ValidationInvalid{
+	public MedicoResponseDTO atualizarDados(Long id, MedicoUpdateDTO dados) throws MedicoNotFound, ValidationInvalid{
 		
 		try {
 			this.validarDados(dados);
@@ -62,6 +62,7 @@ public class MedicoService {
 		medico.setTelefone(dados.telefone() == null ? medico.getTelefone() : dados.telefone());
 		medico.setEndereco(dados.endereco() == null ? medico.getEndereco() : new Endereco(dados.endereco()));
 		medicoRepository.save(medico);
+		return new MedicoResponseDTO(medico);
 
 	}
 	

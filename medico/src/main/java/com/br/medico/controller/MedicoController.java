@@ -39,7 +39,6 @@ public class MedicoController {
 	
 	@GetMapping("/listar/")
 	public ResponseEntity<List<MedicoResponseDTO>> listaMedicos(@RequestParam(required=false) Integer page) {
-		//VERIFICAR A FORMA DE PASSAR A PÁGINA
 		return new ResponseEntity<List<MedicoResponseDTO>>(servico.listarMedicos(page),HttpStatus.OK);
 	}
 	
@@ -54,25 +53,14 @@ public class MedicoController {
 	}
 	
 	@PutMapping("/atualizar/{id}")
-	public ResponseEntity<?> atualizarDados(@PathVariable Long id, @Valid @RequestBody MedicoUpdateDTO dados){
-		System.out.println(id);
-		
-		servico.atualizarDados(id, dados);
-		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+	public ResponseEntity<?> atualizarDados(@PathVariable Long id, @Valid @RequestBody MedicoUpdateDTO dados){		
+		return new ResponseEntity<MedicoResponseDTO>(servico.atualizarDados(id, dados),HttpStatus.ACCEPTED);
 	}
 	
 	@DeleteMapping("/apagar/{id}")
 	public ResponseEntity<?> deleteMedico(@PathVariable Long id) {
 		servico.deleteMedico(id);
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
-		
-//		try {
-//			servico.deleteMedico(id);
-//			return new ResponseEntity<>(HttpStatus.ACCEPTED);
-//		} catch (MedicoNotFound e) {
-//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//		}
-
 	}
 		
 }
