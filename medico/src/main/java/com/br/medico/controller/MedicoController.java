@@ -53,14 +53,14 @@ public class MedicoController {
 	}
 	
 	@PutMapping("/atualizar/{id}")
-	public ResponseEntity<?> atualizarDados(@PathVariable Long id, @Valid @RequestBody MedicoUpdateDTO dados){		
+	public ResponseEntity<MedicoResponseDTO> atualizarDados(@PathVariable Long id, @Valid @RequestBody MedicoUpdateDTO dados){		
 		return new ResponseEntity<MedicoResponseDTO>(servico.atualizarDados(id, dados),HttpStatus.ACCEPTED);
 	}
 	
 	@DeleteMapping("/apagar/{id}")
-	public ResponseEntity<?> deleteMedico(@PathVariable Long id) {
+	public ResponseEntity<HttpStatus> deleteMedico(@PathVariable Long id) {
 		servico.deleteMedico(id);
-		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+		return new ResponseEntity<HttpStatus>(HttpStatus.ACCEPTED);
 	}
 		
 }

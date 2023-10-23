@@ -119,7 +119,7 @@ public class ConsultaService {
 		ResponseEntity<PacienteResponseDTO> p = pacienteClient.encontrarPacientePorId(id);
 		}
 		catch (FeignClientException e) {
-			
+			throw e;
 		}
 	}
 	
@@ -187,6 +187,9 @@ public class ConsultaService {
 	}
 
 	public void cancelar(ConsultaCancelamentoRequestDTO cancelamento) throws ConsultaNaoMarcada, CancelamentoForaDoPrazo {
+		
+		validaPaciente(cancelamento.paciente());
+		
 		Consulta consulta = consultaRepository.findByIdsDataAndIdsPaciente(cancelamento.data(), cancelamento.paciente())
 				            .orElseThrow(() -> new ConsultaNaoMarcada());
 		
