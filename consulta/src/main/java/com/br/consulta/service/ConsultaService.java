@@ -65,7 +65,6 @@ public class ConsultaService {
 				
 		Consulta consulta = new Consulta(data, id);
 		consultaRepository.save(consulta);
-//		emailClient.enviarEmail(new EmailDto(paciente));
 		rabbitTemplate.convertAndSend("email_enviar.exchange","", new EmailDto(paciente));
 		return new ConsultaResponseDTO(consulta.getData(), consulta.getHorario(), medico.nome());
 		
@@ -214,7 +213,6 @@ public class ConsultaService {
 		consultaRepository.save(consulta);
 
 		PacienteResponseDTO paciente = pacienteClient.encontrarPacientePorId(cancelamento.paciente()).getBody(); 
-		//emailClient.enviarEmail(new EmailDto(paciente, cancelamento));
 		rabbitTemplate.convertAndSend("email_enviar.exchange","", new EmailDto(paciente, cancelamento));
 		
 	}
