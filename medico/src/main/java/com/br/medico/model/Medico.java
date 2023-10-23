@@ -24,7 +24,7 @@ public class Medico {
 	
 	@ManyToOne(cascade=CascadeType.PERSIST)
 	private Endereco endereco;
-	@Column(nullable = false)
+	@Column(nullable = false /*unique = true */)
 	private String crm;
 	
 	@Enumerated(EnumType.STRING)

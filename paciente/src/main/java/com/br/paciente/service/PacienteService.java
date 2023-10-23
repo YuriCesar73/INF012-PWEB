@@ -29,7 +29,6 @@ public class PacienteService {
 	}
 
 	public List<PacienteResponseDTO> listarPacientes(Integer page){
-		
 		return PacienteResponseDTO.converter(pacienteRepository.findByActiveTrueOrderByDadosNomeAsc(PageRequest.of(page == null ? 0 : page, 10)));
 	}
 	
@@ -38,7 +37,7 @@ public class PacienteService {
 		return new PacienteResponseDTO(paciente);
 	}
 	
-	public void atualizarDados(Long id, PacienteUpdateDTO dados) throws PacienteNotFound, ValidationInvalid{
+	public PacienteResponseDTO atualizarDados(Long id, PacienteUpdateDTO dados) throws PacienteNotFound, ValidationInvalid{
 		
 		try {
 			this.validarDados(dados);
@@ -47,10 +46,13 @@ public class PacienteService {
 		}
 		
 		Paciente paciente = pacienteRepository.findByActiveTrueAndId(id).orElseThrow(() -> new PacienteNotFound(id));
+		
 		paciente.setNome(dados.nome() == null ? paciente.getNome(): dados.nome());
 		paciente.setTelefone(dados.telefone() == null ? paciente.getTelefone() : dados.telefone());
 		paciente.setEndereco(dados.endereco() == null ? paciente.getEndereco() : new Endereco(dados.endereco()));
 		pacienteRepository.save(paciente);
+		
+		return new PacienteResponseDTO(paciente);
 
 	}
 	
@@ -64,19 +66,10 @@ public class PacienteService {
 
 	public void deletePaciente(Long id) throws PacienteNotFound {
 		Paciente paciente = pacienteRepository.findById(id).orElseThrow(() -> new PacienteNotFound(id));
-		
 		paciente.setActive(false);
 		pacienteRepository.save(paciente);
 	}
 
-	public void findPacienteAtivo(Long id) throws PacienteNotFound {
-		Optional<Paciente> paciente = pacienteRepository.findByActiveTrueAndId(id);
-		if(paciente.isEmpty()) {
-			throw new PacienteNotFound(id);
-		}
-		
-		PacienteResponseDTO p = new PacienteResponseDTO(paciente.get());
-		
-	}
+	
 
 }

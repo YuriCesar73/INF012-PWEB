@@ -24,6 +24,7 @@ public class Paciente {
 	@ManyToOne(cascade=CascadeType.PERSIST)
 	private Endereco endereco;
 	
+	//@Column(unique = true)
 	private String cpf;
 	
 	@Column(nullable = false)

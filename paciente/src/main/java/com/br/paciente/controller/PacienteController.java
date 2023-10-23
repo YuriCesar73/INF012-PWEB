@@ -47,36 +47,14 @@ public class PacienteController {
 	}
 	
 	@PutMapping("/atualizar/{id}")
-	public ResponseEntity<?> atualizarDados(@PathVariable Long id, @Valid @RequestBody PacienteUpdateDTO dados){
-		
-		servico.atualizarDados(id, dados);
-		return new ResponseEntity<>(HttpStatus.ACCEPTED);
-		
-//		try {
-//			servico.atualizarDados(id, dados);
-//			return new ResponseEntity<>(HttpStatus.ACCEPTED);
-//		} catch (PacienteNotFound e) {
-//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//		}
-//		  catch(ValidationInvalid error) {
-//			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//		}
+	public ResponseEntity<PacienteResponseDTO> atualizarDados(@PathVariable Long id, @Valid @RequestBody PacienteUpdateDTO dados){
+		return new ResponseEntity<PacienteResponseDTO>(servico.atualizarDados(id, dados), HttpStatus.ACCEPTED);
 	}
 	
 	@DeleteMapping("/apagar/{id}")
-	public ResponseEntity<?> deleteMedico(@PathVariable Long id) {
+	public ResponseEntity<HttpStatus> deleteMedico(@PathVariable Long id) {
 		servico.deletePaciente(id);
-		return new ResponseEntity<>(HttpStatus.ACCEPTED);
-		
-		
-//		try {
-//			servico.deletePaciente(id);
-//			return new ResponseEntity<>(HttpStatus.ACCEPTED);
-//		} catch (PacienteNotFound e) {
-//			// TODO Auto-generated catch block
-//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//		}
-
+		return new ResponseEntity<HttpStatus>(HttpStatus.ACCEPTED);
 	}
 		
 }
