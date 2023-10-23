@@ -31,7 +31,7 @@ public class ConsultaController {
 	}
 	
 	@PutMapping("/cancelar")
-	public ResponseEntity<Object> cancelarConsulta(@RequestBody ConsultaCancelamentoRequestDTO motivo) {
+	public ResponseEntity<HttpStatus> cancelarConsulta(@RequestBody ConsultaCancelamentoRequestDTO motivo) {
 		service.cancelar(motivo);
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
