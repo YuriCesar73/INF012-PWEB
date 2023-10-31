@@ -24,7 +24,7 @@ public class Paciente {
 	@ManyToOne(cascade=CascadeType.PERSIST)
 	private Endereco endereco;
 	
-	//@Column(unique = true)
+	@Column(unique = true)
 	private String cpf;
 	
 	@Column(nullable = false)
@@ -35,7 +35,7 @@ public class Paciente {
 	}
 	
 	public Paciente(PacienteRequestDTO paciente) {
-		this.active = true;
+		this.active = false;
 		this.dados = paciente.dadosPessoais();
 		this.cpf = paciente.cpf();
 		this.endereco = new Endereco(paciente.endereco());

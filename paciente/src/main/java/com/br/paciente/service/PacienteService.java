@@ -1,7 +1,6 @@
 package com.br.paciente.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.br.paciente.dto.PacienteRequestDTO;
 import com.br.paciente.dto.PacienteResponseDTO;
 import com.br.paciente.dto.PacienteUpdateDTO;
+import com.br.paciente.exception.CpfJaCadastrado;
 import com.br.paciente.exception.PacienteNotFound;
 import com.br.paciente.exception.ValidationInvalid;
 import com.br.paciente.model.Endereco;
@@ -23,10 +23,15 @@ public class PacienteService {
 	private PacienteRepository pacienteRepository;
 
 	public PacienteResponseDTO cadastrarPaciente(PacienteRequestDTO data) {
-		Paciente paciente = new Paciente(data);
+		Paciente paciente = pacienteRepository.findByCpf(data.cpf()).orElse(new Paciente(data));
+		if(paciente.getActive()) {
+			throw new CpfJaCadastrado(data.cpf());
+		}
+		paciente.setActive(true);
 		pacienteRepository.save(paciente);
 		return new PacienteResponseDTO(paciente);
 	}
+	
 
 	public List<PacienteResponseDTO> listarPacientes(Integer page){
 		return PacienteResponseDTO.converter(pacienteRepository.findByActiveTrueOrderByDadosNomeAsc(PageRequest.of(page == null ? 0 : page, 10)));
