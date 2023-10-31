@@ -1,5 +1,6 @@
 package com.br.consulta.exception;
 
+@SuppressWarnings("serial")
 public class ConsultaNaoMarcada extends RuntimeException {
 	
 	public ConsultaNaoMarcada() {

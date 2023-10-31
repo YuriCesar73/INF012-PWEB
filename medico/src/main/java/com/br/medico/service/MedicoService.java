@@ -11,6 +11,7 @@ import com.br.medico.dto.MedicoRequestDTO;
 import com.br.medico.dto.MedicoResponseDTO;
 import com.br.medico.dto.MedicoResponseToMs;
 import com.br.medico.dto.MedicoUpdateDTO;
+import com.br.medico.exception.CrmJaCadastrado;
 import com.br.medico.exception.MedicoNotFound;
 import com.br.medico.exception.ValidationInvalid;
 import com.br.medico.model.Endereco;
@@ -26,7 +27,13 @@ public class MedicoService {
 	private MedicoRepository medicoRepository;
 
 	public MedicoResponseDTO cadastrarMedico(MedicoRequestDTO data) {
-		Medico medico = new Medico(data);
+		
+		Medico medico = medicoRepository.findByCrm(data.crm()).orElse(new Medico(data));
+
+		if(medico.getActive()) {
+			throw new CrmJaCadastrado(data.crm());
+		}
+		medico.setActive(true);
 		medicoRepository.save(medico);
 		return new MedicoResponseDTO(medico);
 	}
@@ -76,8 +83,6 @@ public class MedicoService {
 
 	public void deleteMedico(Long id) throws MedicoNotFound {
 		Medico medico = medicoRepository.findById(id).orElseThrow(() -> new MedicoNotFound(id));
-
-		
 		medico.setActive(false);
 		medicoRepository.save(medico);
 	}

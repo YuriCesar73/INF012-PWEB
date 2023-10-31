@@ -24,7 +24,7 @@ public class Medico {
 	
 	@ManyToOne(cascade=CascadeType.PERSIST)
 	private Endereco endereco;
-	@Column(nullable = false /*unique = true */)
+	@Column(nullable = false, unique = true)
 	private String crm;
 	
 	@Enumerated(EnumType.STRING)
@@ -52,7 +52,7 @@ public class Medico {
 		this.endereco = endereco;
 		this.crm = medicoData.crm();
 		this.especialidade = medicoData.especialidade();
-		this.active = true;
+		this.active = false;
 	}
 	
 	public DadosPessoais getDados() {

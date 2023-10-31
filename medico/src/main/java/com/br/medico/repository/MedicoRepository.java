@@ -16,7 +16,9 @@ public interface MedicoRepository extends JpaRepository<Medico, Long>{
 	 
 	 public List<Medico> findByActiveTrueOrderByDadosNomeAsc(PageRequest page);
 	 
-	 public Optional<Medico> findByActiveTrueAndId(Long id);  
+	 public Optional<Medico> findByActiveTrueAndId(Long id);
+	 
+	 public Optional<Medico> findByCrm(String crm);
 
 	 
 } 

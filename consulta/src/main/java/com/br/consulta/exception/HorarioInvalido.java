@@ -1,5 +1,6 @@
 package com.br.consulta.exception;
 
+@SuppressWarnings("serial")
 public class HorarioInvalido extends RuntimeException {
 
 	public HorarioInvalido() {
