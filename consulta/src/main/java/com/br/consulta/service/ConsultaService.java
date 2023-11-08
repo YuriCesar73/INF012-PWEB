@@ -14,18 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.br.consulta.clients.EmailClient;
 import com.br.consulta.clients.MedicoClient;
 import com.br.consulta.clients.PacienteClient;
-import com.br.consulta.clients.dto.MedicoResponseDTO;
 import com.br.consulta.clients.dto.EmailDto;
 import com.br.consulta.clients.dto.MedicoAleatorioDTO;
+import com.br.consulta.clients.dto.MedicoResponseDTO;
 import com.br.consulta.clients.dto.PacienteResponseDTO;
 import com.br.consulta.dto.ConsultaCancelamentoRequestDTO;
 import com.br.consulta.dto.ConsultaRequestDTO;
 import com.br.consulta.dto.ConsultaResponseDTO;
 import com.br.consulta.exception.CancelamentoForaDoPrazo;
 import com.br.consulta.exception.ConsultaNaoMarcada;
+import com.br.consulta.exception.DataInvalida;
 import com.br.consulta.exception.DiaInvalidoParaConsulta;
 import com.br.consulta.exception.HorarioInvalido;
 import com.br.consulta.exception.JaPossuiAgendamento;
@@ -49,12 +49,8 @@ public class ConsultaService {
 	@Autowired
 	PacienteClient pacienteClient;
 	
-	@Autowired
-	EmailClient emailClient;
-	
-	
 	 @Autowired
-	 private RabbitTemplate rabbitTemplate;
+	 RabbitTemplate rabbitTemplate;
 
 	public ConsultaResponseDTO cadastrar(ConsultaRequestDTO data) {
 		Long id;
@@ -155,7 +151,7 @@ public class ConsultaService {
 		
 		//Gerar nova exception
 		if(data.isBefore(dataAtual)) {
-			throw new HorarioInvalido();
+			throw new DataInvalida();
 		}
 		
 		

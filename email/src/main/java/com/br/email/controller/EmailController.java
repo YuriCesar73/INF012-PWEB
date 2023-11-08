@@ -22,7 +22,6 @@ public class EmailController {
 	
 	@PostMapping
 	public ResponseEntity<EmailDto> sendEmail(@RequestBody EmailDto data){
-		System.out.println(data.mailFrom());
 		return new ResponseEntity<EmailDto>(service.sendEmail(data),HttpStatus.CREATED);
 	}
 }

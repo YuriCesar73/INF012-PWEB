@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.br.consulta.exception.CancelamentoForaDoPrazo;
 import com.br.consulta.exception.ConsultaNaoMarcada;
+import com.br.consulta.exception.DataInvalida;
 import com.br.consulta.exception.DiaInvalidoParaConsulta;
 import com.br.consulta.exception.HorarioInvalido;
 import com.br.consulta.exception.JaPossuiAgendamento;
@@ -81,6 +82,14 @@ public class ResourceExceptionHandler {
 	@ExceptionHandler(SemMedicosDisponiveis.class)
 	public ResponseEntity<StandardError> semMedicosDisponiveis(SemMedicosDisponiveis e, HttpServletRequest request){
 		String error = "Não há médicos disponíveis para a data selecionada";
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
+	
+	@ExceptionHandler(DataInvalida.class)
+	public ResponseEntity<StandardError> semMedicosDisponiveis(DataInvalida e, HttpServletRequest request){
+		String error = "A data inserida é anterior a data atual";
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
