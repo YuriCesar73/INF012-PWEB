@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 //@EnableFeignClients
-public class EmailApplication {
+public class EmailApplication { 
 
 	public static void main(String[] args) {
 		SpringApplication.run(EmailApplication.class, args);

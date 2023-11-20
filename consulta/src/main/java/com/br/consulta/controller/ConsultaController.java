@@ -1,10 +1,13 @@
 package com.br.consulta.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.br.consulta.dto.ConsultaCancelamentoRequestDTO;
 import com.br.consulta.dto.ConsultaRequestDTO;
 import com.br.consulta.dto.ConsultaResponseDTO;
+import com.br.consulta.model.Consulta;
 import com.br.consulta.service.ConsultaService;
 
 import jakarta.validation.Valid;
@@ -21,7 +25,7 @@ import jakarta.validation.Valid;
 public class ConsultaController {
 	
 	@Autowired
-	ConsultaService service;
+	private ConsultaService service;
 	
 	
 	@PostMapping("/cadastrar")
@@ -30,9 +34,15 @@ public class ConsultaController {
 		return new ResponseEntity<ConsultaResponseDTO>(consultaConfirmada, HttpStatus.OK);
 	}
 	
-	@PutMapping("/cancelar")
+	@DeleteMapping("/cancelar")
 	public ResponseEntity<HttpStatus> cancelarConsulta(@RequestBody ConsultaCancelamentoRequestDTO motivo) {
 		service.cancelar(motivo);
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+	}
+	
+	@GetMapping("/listar")
+	public ResponseEntity<List<Consulta>> listarConsultas() {
+		
+		return new ResponseEntity<List<Consulta>>(service.listar(), HttpStatus.ACCEPTED);
 	}
 }

@@ -15,10 +15,10 @@ public class ChaveComposta implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Column(nullable = false, name = "medico_id")
-	private Long medico;
+	private String medico;
 	
 	@Column(nullable = false, name = "paciente_id")
-	private Long paciente;
+	private String paciente;
 	
 	@Column(nullable = false, name = "data")
 	private LocalDate data;
@@ -26,7 +26,7 @@ public class ChaveComposta implements Serializable{
 	@Column(nullable = false, name = "horario")
 	private LocalTime horario;
 
-	public ChaveComposta(Long medico, Long paciente, LocalDate data, LocalTime horario) {
+	public ChaveComposta(String medico, String paciente, LocalDate data, LocalTime horario) {
 		this.medico = medico;
 		this.paciente = paciente;
 		this.data = data;
@@ -37,19 +37,19 @@ public class ChaveComposta implements Serializable{
 		
 	}
 
-	public Long getMedico() {
+	public String getMedico() {
 		return medico;
 	}
 
-	public void setMedico(Long medico) {
+	public void setMedico(String medico) {
 		this.medico = medico;
 	}
 
-	public Long getPaciente() {
+	public String getPaciente() {
 		return paciente;
 	}
 
-	public void setPaciente(Long paciente) {
+	public void setPaciente(String paciente) {
 		this.paciente = paciente;
 	}
 

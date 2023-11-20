@@ -21,6 +21,7 @@ public class EmailController {
 	private EmailService service;
 	
 	@PostMapping
+	//Essa rota nunca é utilizada porque email funciona consumindo a fila
 	public ResponseEntity<EmailDto> sendEmail(@RequestBody EmailDto data){
 		return new ResponseEntity<EmailDto>(service.sendEmail(data),HttpStatus.CREATED);
 	}

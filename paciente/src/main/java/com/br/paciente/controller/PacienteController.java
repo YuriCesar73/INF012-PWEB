@@ -27,33 +27,33 @@ import jakarta.validation.Valid;
 public class PacienteController {
 	
 	@Autowired
-	 PacienteService servico;
+	private PacienteService servico;
 	
 	@PostMapping("/cadastrar")
 	public ResponseEntity<PacienteResponseDTO> cadastrarMedico(@Valid @RequestBody PacienteRequestDTO postData) {
 		PacienteResponseDTO response = servico.cadastrarPaciente(postData);
 		return new ResponseEntity<PacienteResponseDTO> (response, HttpStatus.CREATED);  
 	}
-	
+		
 	@GetMapping("/listar/")
 	public ResponseEntity<List<PacienteResponseDTO>> listarPacientes(@RequestParam(required=false) Integer page) {
 		//VERIFICAR A FORMA DE PASSAR A PÁGINA
 		return new ResponseEntity<List<PacienteResponseDTO>>(servico.listarPacientes(page),HttpStatus.ACCEPTED);
 	}
 	
-	@GetMapping("/listar/{id}")
-	public ResponseEntity<PacienteResponseDTO> getPaciente(@PathVariable Long id) {
-		return new ResponseEntity<PacienteResponseDTO>(servico.getPaciente(id),HttpStatus.ACCEPTED);
+	@GetMapping("/listar/{cpf}")
+	public ResponseEntity<PacienteResponseDTO> getPaciente(@PathVariable String cpf) {
+		return new ResponseEntity<PacienteResponseDTO>(servico.getPaciente(cpf),HttpStatus.ACCEPTED);
 	}
 	
-	@PutMapping("/atualizar/{id}")
-	public ResponseEntity<PacienteResponseDTO> atualizarDados(@PathVariable Long id, @Valid @RequestBody PacienteUpdateDTO dados){
-		return new ResponseEntity<PacienteResponseDTO>(servico.atualizarDados(id, dados), HttpStatus.ACCEPTED);
+	@PutMapping("/atualizar/{cpf}")
+	public ResponseEntity<PacienteResponseDTO> atualizarDados(@PathVariable String cpf, @Valid @RequestBody PacienteUpdateDTO dados){
+		return new ResponseEntity<PacienteResponseDTO>(servico.atualizarDados(cpf, dados), HttpStatus.ACCEPTED);
 	}
 	
-	@DeleteMapping("/apagar/{id}")
-	public ResponseEntity<HttpStatus> deleteMedico(@PathVariable Long id) {
-		servico.deletePaciente(id);
+	@DeleteMapping("/apagar/{cpf}")
+	public ResponseEntity<HttpStatus> deleteMedico(@PathVariable String cpf) {
+		servico.deletePaciente(cpf);
 		return new ResponseEntity<HttpStatus>(HttpStatus.ACCEPTED);
 	}
 		

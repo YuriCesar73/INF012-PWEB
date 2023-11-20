@@ -11,7 +11,6 @@ import java.util.Optional;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.br.consulta.clients.MedicoClient;
@@ -41,78 +40,80 @@ import feign.FeignException.FeignClientException;
 public class ConsultaService {
 	
 	@Autowired
-	ConsultaRepository consultaRepository;
+	private ConsultaRepository consultaRepository;
 	
 	@Autowired
-	MedicoClient medicoClient;
+	private MedicoClient medicoClient;
 	
 	@Autowired
-	PacienteClient pacienteClient;
+	private PacienteClient pacienteClient;
 	
-	 @Autowired
-	 RabbitTemplate rabbitTemplate;
+	@Autowired
+	private RabbitTemplate rabbitTemplate;
 
 	public ConsultaResponseDTO cadastrar(ConsultaRequestDTO data) {
-		Long id;
-		id = validarConsulta(data);
+		validaDataHorario(data.data(), data.horario());
+	
+		PacienteResponseDTO paciente = validaPaciente(data.paciente());
+		MedicoResponseDTO medico = validaMedico(data.medico(), data.data(), data.horario());
+		Consulta consulta = validaConsulta(data, medico.crm(), paciente.cpf());
 		
-		MedicoResponseDTO medico = medicoClient.encontrarMedicoPorId(id).getBody();
-		PacienteResponseDTO paciente = pacienteClient.encontrarPacientePorId(data.paciente()).getBody(); 
-				
-		Consulta consulta = new Consulta(data, id);
 		consultaRepository.save(consulta);
 		rabbitTemplate.convertAndSend("email_enviar.exchange","", new EmailDto(paciente));
 		return new ConsultaResponseDTO(consulta.getData(), consulta.getHorario(), medico.nome());
-		
 	}
 
-	private Long validarConsulta(ConsultaRequestDTO data) {
-		validaDiaDaSemana(data.data().getDayOfWeek());
-		validaHorario(data.horario(), data.data());
-		validaPaciente(data.paciente());
-		Long id = validaMedico(data.medico(), data.data(), data.horario());
-		validaUnicaConsultaDoDiaPaciente(data.data(), data.paciente());
-		
-		return id;
+	private void validaDataHorario(LocalDate data, LocalTime horario) {
+		validaDiaDaSemana(data.getDayOfWeek());
+		validaHorario(horario, data);
 	}
 	
-	private Long validaMedico(Long id, LocalDate data, LocalTime horario) {
-		//Verifica se o médico está ativo no sistema
-		Long novoId = null;
-		Boolean achouMedico = false;
-		if(id != null) {
-			MedicoResponseDTO medico =  medicoClient.encontrarMedicoPorId(id).getBody();
-			validaDisponibilidadeMedico(data, horario, id);
-			return id;
+	private Consulta validaConsulta(ConsultaRequestDTO consulta, String medicoCrm, String pacienteCpf) {
+		validaUnicaConsultaDoDiaPaciente(consulta.data(), pacienteCpf);
+		
+		Optional<Consulta> consultaRegistro  = consultaRepository.findByIdsDataAndIdsHorarioAndIdsMedicoAndIdsPacienteAndDesmarcadaTrue(consulta.data(), consulta.horario(), medicoCrm, pacienteCpf);
+		if(consultaRegistro.isPresent()) {
+			consultaRegistro.get().setDesmarcada(false);
+			consultaRegistro.get().setMotivo(null);
+			return consultaRegistro.get();
 		}
-		else {
+		
+		Consulta novaConsulta = new Consulta(consulta);
+		return novaConsulta;
+	}
+
+	private MedicoResponseDTO validaMedico(String crm, LocalDate data, LocalTime horario) {
+		//Verifica se o médico está ativo no sistema
+		Boolean achouMedico = false;
+		
+		if(crm == null) {
 			List<MedicoAleatorioDTO> medicos = medicoClient.listaTodosMedicos().getBody();
 			
 			for (MedicoAleatorioDTO med : medicos) {
 				try {
-					validaDisponibilidadeMedico(data, horario, med.id());
-					achouMedico = true;
-					novoId = med.id();
-					break;
+					achouMedico = validaDisponibilidadeMedico(data, horario, med.crm());
+					return medicoClient.encontrarMedico(med.crm()).getBody();
 				}
 				catch (MedicoIndisponivel e) {
 					
 				}
-				
-				
 			}
 			
 			if(!achouMedico) {
 				throw new SemMedicosDisponiveis();
 			}
 		}
-				return novoId;		
+			//Criar um método para ver se médico existe
+			MedicoResponseDTO medico =  medicoClient.encontrarMedico(crm).getBody();
+			validaDisponibilidadeMedico(data, horario, crm);	
+			return medico;
 	}
 	
-	private void validaPaciente(Long id) {
+	private PacienteResponseDTO validaPaciente(String cpf) {
 		//Verifica se o paciente está ativo no sistema
 		try {
-		ResponseEntity<PacienteResponseDTO> p = pacienteClient.encontrarPacientePorId(id);
+		PacienteResponseDTO paciente = pacienteClient.encontrarPaciente(cpf).getBody();
+		return paciente;
 		}
 		catch (FeignClientException e) {
 			throw e;
@@ -120,10 +121,10 @@ public class ConsultaService {
 	}
 	
 	
-	private Boolean validaDisponibilidadeMedico(LocalDate data, LocalTime horario, Long id) throws MedicoIndisponivel {
+	private Boolean validaDisponibilidadeMedico(LocalDate data, LocalTime horario, String crmMedico) throws MedicoIndisponivel {
 		//Verifica se o médico está disponível na data e horario estabelecido
 		
-		Optional<Consulta> consulta = consultaRepository.findByIdsDataAndIdsHorarioAndIdsMedico(data, horario, id);
+		Optional<Consulta> consulta = consultaRepository.findByIdsDataAndIdsHorarioAndIdsMedico(data, horario, crmMedico);
 		
 		if(consulta.isPresent()) {
 			throw new MedicoIndisponivel();
@@ -132,14 +133,15 @@ public class ConsultaService {
 		return true;
 	}
 	
-	private void validaUnicaConsultaDoDiaPaciente(LocalDate data, Long id) throws JaPossuiAgendamento {
+	private boolean validaUnicaConsultaDoDiaPaciente(LocalDate data, String cpfPaciente) throws JaPossuiAgendamento {
 		//Verifica se o paciente já tem uma consulta no dia
-		Optional<Consulta> consulta = consultaRepository.findByIdsDataAndIdsPaciente(data, id);
+		Optional<Consulta> consultaRegistro = consultaRepository.findByIdsDataAndIdsPaciente(data, cpfPaciente);
 		
-		if(consulta.isPresent()) {
+		if(consultaRegistro.isPresent() && !consultaRegistro.get().getDesmarcada()) {
 			throw new JaPossuiAgendamento(data);
 		}
 		
+		return true;
 	}
 	
 	private void validaHorario(LocalTime horario, LocalDate data) throws HorarioInvalido {
@@ -176,7 +178,7 @@ public class ConsultaService {
 	
 	private void validaDiaDaSemana(DayOfWeek dayOfWeek) throws DiaInvalidoParaConsulta {
 		//Dia de funcionamento: Segunda a Sábado
-		if(dayOfWeek.equals(dayOfWeek.SUNDAY)) {
+		if(dayOfWeek.equals(DayOfWeek.SUNDAY)) {
 			throw new DiaInvalidoParaConsulta();
 		}
 		
@@ -208,12 +210,17 @@ public class ConsultaService {
 		}
 				
 		consulta.setMotivo(cancelamento.motivo());
+		consulta.setDesmarcada(true);
 		
 		consultaRepository.save(consulta);
 
-		PacienteResponseDTO paciente = pacienteClient.encontrarPacientePorId(cancelamento.paciente()).getBody(); 
+		PacienteResponseDTO paciente = pacienteClient.encontrarPaciente(cancelamento.paciente()).getBody(); 
 		rabbitTemplate.convertAndSend("email_enviar.exchange","", new EmailDto(paciente, cancelamento));
 		
+	}
+
+	public List<Consulta> listar() {
+		return consultaRepository.findAll();
 	}
 	
 }

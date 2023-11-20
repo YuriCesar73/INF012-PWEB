@@ -10,6 +10,6 @@ import com.br.consulta.clients.dto.PacienteResponseDTO;
 
 @FeignClient("paciente-ms")
 public interface PacienteClient {
-	@RequestMapping(method = RequestMethod.GET, value = "/pacientes/listar/{id}")
-	public ResponseEntity<PacienteResponseDTO> encontrarPacientePorId(@PathVariable Long id);
+	@RequestMapping(method = RequestMethod.GET, value = "/pacientes/listar/{cpf}")
+	public ResponseEntity<PacienteResponseDTO> encontrarPaciente(@PathVariable String cpf);
 }

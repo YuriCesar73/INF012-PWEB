@@ -12,11 +12,10 @@ import com.br.email.service.EmailService;
 public class ConsultaListener {
 	
 	 @Autowired
-	 EmailService emailService;
+	 private EmailService emailService;
 	 
 	  @RabbitListener(queues = "consulta.email_enviar")
 	    public void recebeMensagem(@Payload EmailDto email) {
-	    	System.out.println("CHEGOU AQUI");
 		  emailService.sendEmail(email);
 	  }
 

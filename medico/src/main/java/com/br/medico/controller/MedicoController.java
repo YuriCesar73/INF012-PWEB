@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 public class MedicoController {
 	
 	@Autowired
-	 MedicoService servico;
+	private MedicoService servico;
 	
 	@PostMapping("/cadastrar")
 	public ResponseEntity<MedicoResponseDTO> cadastrarMedico(@Valid @RequestBody MedicoRequestDTO postData) {
@@ -42,24 +42,25 @@ public class MedicoController {
 		return new ResponseEntity<List<MedicoResponseDTO>>(servico.listarMedicos(page),HttpStatus.OK);
 	}
 	
-	@GetMapping("/listar/{id}")
-	public ResponseEntity<MedicoResponseDTO> listaMedicos(@PathVariable Long id) {
-		return new ResponseEntity<MedicoResponseDTO>(servico.getMedico(id),HttpStatus.OK);
+	@GetMapping("/listar/{crm}")
+	public ResponseEntity<MedicoResponseDTO> listaMedicos(@PathVariable String crm) {
+		return new ResponseEntity<MedicoResponseDTO>(servico.getMedico(crm),HttpStatus.OK);
 	}
 	
+	//Rota não utilizada. Feita para debugar
 	@GetMapping("/listar/all")
 	public ResponseEntity<List<MedicoResponseToMs>> listAll() {
 		return new ResponseEntity<List<MedicoResponseToMs>>(servico.listaTodosMedicos(), HttpStatus.OK);
 	}
 	
-	@PutMapping("/atualizar/{id}")
-	public ResponseEntity<MedicoResponseDTO> atualizarDados(@PathVariable Long id, @Valid @RequestBody MedicoUpdateDTO dados){		
-		return new ResponseEntity<MedicoResponseDTO>(servico.atualizarDados(id, dados),HttpStatus.ACCEPTED);
+	@PutMapping("/atualizar/{crm}")
+	public ResponseEntity<MedicoResponseDTO> atualizarDados(@PathVariable String crm, @Valid @RequestBody MedicoUpdateDTO dados){		
+		return new ResponseEntity<MedicoResponseDTO>(servico.atualizarDados(crm, dados),HttpStatus.ACCEPTED);
 	}
 	
-	@DeleteMapping("/apagar/{id}")
-	public ResponseEntity<HttpStatus> deleteMedico(@PathVariable Long id) {
-		servico.deleteMedico(id);
+	@DeleteMapping("/apagar/{crm}")
+	public ResponseEntity<HttpStatus> deleteMedico(@PathVariable String crm) {
+		servico.deleteMedico(crm);
 		return new ResponseEntity<HttpStatus>(HttpStatus.ACCEPTED);
 	}
 		

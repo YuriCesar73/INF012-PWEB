@@ -3,8 +3,8 @@ package com.br.paciente.exception;
 @SuppressWarnings("serial")
 public class PacienteNotFound extends RuntimeException {
 	
-	public PacienteNotFound(Long id) {
-		super("Paciente não existe. ID " + id);
+	public PacienteNotFound(String cpf) {
+		super("Paciente não existe. CPF: " + cpf);
 	}
 
 }

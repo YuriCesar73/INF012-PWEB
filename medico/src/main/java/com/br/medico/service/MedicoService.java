@@ -1,7 +1,7 @@
 package com.br.medico.service;
 
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +15,6 @@ import com.br.medico.exception.CrmJaCadastrado;
 import com.br.medico.exception.MedicoNotFound;
 import com.br.medico.exception.ValidationInvalid;
 import com.br.medico.model.Endereco;
-import com.br.medico.model.Especialidade;
 import com.br.medico.model.Medico;
 import com.br.medico.repository.MedicoRepository;
 
@@ -48,13 +47,13 @@ public class MedicoService {
 		
 	}
 	
-	public MedicoResponseDTO getMedico(Long id){
-		Medico medico = medicoRepository.findByActiveTrueAndId(id).orElseThrow(() -> new MedicoNotFound(id));
+	public MedicoResponseDTO getMedico(String crm){
+		Medico medico = medicoRepository.findByActiveTrueAndCrm(crm).orElseThrow(() -> new MedicoNotFound(crm));
 		return new MedicoResponseDTO(medico);
 		
 		
 	}
-	public MedicoResponseDTO atualizarDados(Long id, MedicoUpdateDTO dados) throws MedicoNotFound, ValidationInvalid{
+	public MedicoResponseDTO atualizarDados(String crm, MedicoUpdateDTO dados) throws MedicoNotFound, ValidationInvalid{
 		
 		try {
 			this.validarDados(dados);
@@ -63,7 +62,7 @@ public class MedicoService {
 		}
 		
 		
-		Medico medico = medicoRepository.findByActiveTrueAndId(id).orElseThrow(() -> new MedicoNotFound(id));
+		Medico medico = medicoRepository.findByActiveTrueAndCrm(crm).orElseThrow(() -> new MedicoNotFound(crm));
 		
 		medico.setNome(dados.nome() == null ? medico.getNome(): dados.nome());
 		medico.setTelefone(dados.telefone() == null ? medico.getTelefone() : dados.telefone());
@@ -81,16 +80,16 @@ public class MedicoService {
 		
 	}
 
-	public void deleteMedico(Long id) throws MedicoNotFound {
-		Medico medico = medicoRepository.findById(id).orElseThrow(() -> new MedicoNotFound(id));
+	public void deleteMedico(String crm) throws MedicoNotFound {
+		Medico medico = medicoRepository.findByActiveTrueAndCrm(crm).orElseThrow(() -> new MedicoNotFound(crm));
 		medico.setActive(false);
 		medicoRepository.save(medico);
 	}
 	
-	public MedicoResponseDTO findMedicoAtivo(Long id) throws MedicoNotFound {
-		Optional<Medico> medico = medicoRepository.findByActiveTrueAndId(id);
+	public MedicoResponseDTO findMedicoAtivo(String crm) throws MedicoNotFound {
+		Optional<Medico> medico = medicoRepository.findByActiveTrueAndCrm(crm);
 		if(medico.isEmpty()) {
-			throw new MedicoNotFound(id);
+			throw new MedicoNotFound(crm);
 		}
 		MedicoResponseDTO med = new MedicoResponseDTO(medico.get());
 		return med;

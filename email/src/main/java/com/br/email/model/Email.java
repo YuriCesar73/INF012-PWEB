@@ -28,7 +28,6 @@ public class Email {
 	
 	public Email() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 	

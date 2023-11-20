@@ -13,8 +13,8 @@ import com.br.consulta.clients.dto.MedicoAleatorioDTO;
 
 @FeignClient("medico-ms")
 public interface MedicoClient {
-	@RequestMapping(method = RequestMethod.GET, value = "/medicos/listar/{id}")
-	public ResponseEntity<MedicoResponseDTO> encontrarMedicoPorId(@PathVariable Long id);
+	@RequestMapping(method = RequestMethod.GET, value = "/medicos/listar/{crm}")
+	public ResponseEntity<MedicoResponseDTO> encontrarMedico(@PathVariable String crm);
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/medicos/listar/all")
 	public ResponseEntity<List<MedicoAleatorioDTO>> listaTodosMedicos();

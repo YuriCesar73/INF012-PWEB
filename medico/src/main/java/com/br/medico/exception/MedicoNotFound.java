@@ -4,8 +4,8 @@ package com.br.medico.exception;
 public class MedicoNotFound extends RuntimeException {
 
 	
-	public MedicoNotFound(Long id) {
-		super("Médico não existe. ID " + id);
+	public MedicoNotFound(String crm) {
+		super("Médico não existe. Crm: " + crm);
 	}
 
 }

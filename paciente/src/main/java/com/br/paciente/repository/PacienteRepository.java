@@ -14,8 +14,9 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long>{
 	 
 	public List<Paciente> findByActiveTrueOrderByDadosNomeAsc(PageRequest page);
 
-	public Optional<Paciente> findByActiveTrueAndId(Long id); 
+	public Optional<Paciente> findByActiveTrueAndCpf(String cpf); 
 	
 	public Optional<Paciente> findByCpf(String cpf);
+	
 
 }

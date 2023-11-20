@@ -27,6 +27,7 @@ public class PacienteService {
 		if(paciente.getActive()) {
 			throw new CpfJaCadastrado(data.cpf());
 		}
+		
 		paciente.setActive(true);
 		pacienteRepository.save(paciente);
 		return new PacienteResponseDTO(paciente);
@@ -37,12 +38,12 @@ public class PacienteService {
 		return PacienteResponseDTO.converter(pacienteRepository.findByActiveTrueOrderByDadosNomeAsc(PageRequest.of(page == null ? 0 : page, 10)));
 	}
 	
-	public PacienteResponseDTO getPaciente(Long id) {
-		Paciente paciente = pacienteRepository.findByActiveTrueAndId(id).orElseThrow(() -> new PacienteNotFound(id));
+	public PacienteResponseDTO getPaciente(String cpf) {
+		Paciente paciente = pacienteRepository.findByActiveTrueAndCpf(cpf).orElseThrow(() -> new PacienteNotFound(cpf));
 		return new PacienteResponseDTO(paciente);
 	}
 	
-	public PacienteResponseDTO atualizarDados(Long id, PacienteUpdateDTO dados) throws PacienteNotFound, ValidationInvalid{
+	public PacienteResponseDTO atualizarDados(String cpf, PacienteUpdateDTO dados) throws PacienteNotFound, ValidationInvalid{
 		
 		try {
 			this.validarDados(dados);
@@ -50,7 +51,7 @@ public class PacienteService {
 			throw error;
 		}
 		
-		Paciente paciente = pacienteRepository.findByActiveTrueAndId(id).orElseThrow(() -> new PacienteNotFound(id));
+		Paciente paciente = pacienteRepository.findByActiveTrueAndCpf(cpf).orElseThrow(() -> new PacienteNotFound(cpf));
 		
 		paciente.setNome(dados.nome() == null ? paciente.getNome(): dados.nome());
 		paciente.setTelefone(dados.telefone() == null ? paciente.getTelefone() : dados.telefone());
@@ -61,7 +62,6 @@ public class PacienteService {
 
 	}
 	
-	
 	private void validarDados(PacienteUpdateDTO dados) throws ValidationInvalid {
 		if(!(dados.email() == null) || !(dados.cpf() == null)) {
 			throw new ValidationInvalid();
@@ -69,8 +69,8 @@ public class PacienteService {
 		
 	}
 
-	public void deletePaciente(Long id) throws PacienteNotFound {
-		Paciente paciente = pacienteRepository.findById(id).orElseThrow(() -> new PacienteNotFound(id));
+	public void deletePaciente(String cpf) throws PacienteNotFound {
+		Paciente paciente = pacienteRepository.findByActiveTrueAndCpf(cpf).orElseThrow(() -> new PacienteNotFound(cpf));
 		paciente.setActive(false);
 		pacienteRepository.save(paciente);
 	}

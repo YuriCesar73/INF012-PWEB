@@ -75,10 +75,6 @@ public class Consulta {
 
 	
 
-	public void setMedicoId(Long medicoId) {
-		this.setMedicoId(medicoId); 
-	}
-
 	public Consulta(ChaveComposta ids, LocalDateTime created_at, LocalDateTime updated_at, CancelamentoConsulta motivo) {
 	this.ids = ids;
 	this.created_at = created_at;
@@ -87,8 +83,8 @@ public class Consulta {
 	this.desmarcada = false;
 }
 	
-	public Consulta(ConsultaRequestDTO data, Long id) {
-		this.ids = new ChaveComposta(id, data.paciente(), data.data(), data.horario());
+	public Consulta(ConsultaRequestDTO data, String crm) {
+		this.ids = new ChaveComposta(crm, data.paciente(), data.data(), data.horario());
 		this.desmarcada = false;
 	}
 	
@@ -126,69 +122,48 @@ public class Consulta {
 		this.motivo = status;
 	}
 
-
-
-	public Long getMedico() {
+	public String getMedico() {
 		return ids.getMedico();
 	}
 
-
-
-	public void setMedico(Long medico) {
+	public void setMedicoId(String medico) {
+		this.ids.setMedico(medico); 
+	}
+	
+	public void setMedico(String medico) {
 		this.ids.setMedico(medico); 
 	}
 
-
-
-	public Long getPaciente() {
+	public String getPaciente() {
 		return ids.getPaciente();
 	}
 
-
-
-	public void setPaciente(Long paciente) {
+	public void setPaciente(String paciente) {
 		this.ids.setPaciente(paciente);
 	}
-
-
 
 	public LocalDate getData() {
 		return ids.getData();
 	}
 
-
-
 	public void setData(LocalDate data) {
 		this.ids.setData(data); 
 	}
-
-
 
 	public LocalTime getHorario() {
 		return ids.getHorario();
 	}
 
-
-
 	public void setHorario(LocalTime horario) {
 		this.ids.setHorario(horario); 
 	}
-
-
 
 	public Boolean getDesmarcada() {
 		return desmarcada;
 	}
 
-
-
 	public void setDesmarcada(Boolean desmarcada) {
 		this.desmarcada = desmarcada;
 	}
-	
-	
-	
-	
-	
 
 }
