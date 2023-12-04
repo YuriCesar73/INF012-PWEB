@@ -44,7 +44,7 @@ public class MedicoController {
 	
 	@GetMapping("/listar/{crm}")
 	public ResponseEntity<MedicoResponseDTO> listaMedicos(@PathVariable String crm) {
-		return new ResponseEntity<MedicoResponseDTO>(servico.getMedico(crm),HttpStatus.OK);
+		return new ResponseEntity<MedicoResponseDTO>(servico.getMedico(crm),HttpStatus.ACCEPTED);
 	}
 	
 	//Rota não utilizada. Feita para debugar

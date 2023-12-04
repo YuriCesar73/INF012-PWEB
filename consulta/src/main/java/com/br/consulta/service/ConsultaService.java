@@ -60,7 +60,7 @@ public class ConsultaService {
 		
 		consultaRepository.save(consulta);
 		rabbitTemplate.convertAndSend("email_enviar.exchange","", new EmailDto(paciente));
-		return new ConsultaResponseDTO(consulta.getData(), consulta.getHorario(), medico.nome());
+		return new ConsultaResponseDTO(consulta.getData(), consulta.getHorario(), medico.nome(), paciente.nome());
 	}
 
 	private void validaDataHorario(LocalDate data, LocalTime horario) {
@@ -221,6 +221,12 @@ public class ConsultaService {
 
 	public List<Consulta> listar() {
 		return consultaRepository.findAll();
+	}
+
+	public List<ConsultaResponseDTO> listarPorMedico(String crm) {
+		List<Consulta> consultas = consultaRepository.findByIdsMedico(crm);
+		return ConsultaResponseDTO.converter(consultas);
+		
 	}
 	
 }

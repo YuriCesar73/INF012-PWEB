@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import com.br.consulta.dto.ConsultaRequestDTO;
 import com.br.consulta.dto.ConsultaResponseDTO;
 import com.br.consulta.model.Consulta;
 import com.br.consulta.service.ConsultaService;
+import com.br.medico.dto.MedicoResponseDTO;
 
 import jakarta.validation.Valid;
 
@@ -44,5 +46,10 @@ public class ConsultaController {
 	public ResponseEntity<List<Consulta>> listarConsultas() {
 		
 		return new ResponseEntity<List<Consulta>>(service.listar(), HttpStatus.ACCEPTED);
+	}
+	
+	@GetMapping("/listar/medico/{crm}")
+	public ResponseEntity<List<ConsultaResponseDTO>> listarConsultasPorMedico(@PathVariable String crm){
+		return new ResponseEntity<List<ConsultaResponseDTO>>(service.listarPorMedico(crm),HttpStatus.ACCEPTED);	
 	}
 }
