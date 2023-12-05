@@ -18,7 +18,6 @@ import com.br.consulta.dto.ConsultaRequestDTO;
 import com.br.consulta.dto.ConsultaResponseDTO;
 import com.br.consulta.model.Consulta;
 import com.br.consulta.service.ConsultaService;
-import com.br.medico.dto.MedicoResponseDTO;
 
 import jakarta.validation.Valid;
 
