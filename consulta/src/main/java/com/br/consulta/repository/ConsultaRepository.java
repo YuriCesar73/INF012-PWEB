@@ -12,7 +12,7 @@ import com.br.consulta.model.Consulta;
 
 public interface ConsultaRepository extends JpaRepository<Consulta, Long>{
 
-	Optional<Consulta> findByIdsDataAndIdsPaciente(LocalDate data, String cpfPaciente);
+	Optional<Consulta> findByIdsDataAndIdsPacienteAndDesmarcadaFalse(LocalDate data, String cpfPaciente);
 	
 	Optional<Consulta> findByIdsDataAndIdsHorarioAndIdsMedico(LocalDate data, LocalTime horario, String crmMedico);
 	
@@ -20,7 +20,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long>{
 	
 	List<Consulta> findByIdsMedico(String crmMedico);
 	
-	List<Consulta> findByIdsPaciente(String cpfPaciente);
+	List<Consulta> findByIdsPacienteAndDesmarcadaFalse(String cpfPaciente);
 
 	 
 }

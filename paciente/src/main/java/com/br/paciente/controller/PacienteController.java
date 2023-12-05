@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/pacientes")
 public class PacienteController {
-	
+	 
 	@Autowired
 	private PacienteService servico;
 	
@@ -35,6 +35,7 @@ public class PacienteController {
 		return new ResponseEntity<PacienteResponseDTO> (response, HttpStatus.CREATED);  
 	}
 		
+	
 	@GetMapping("/listar/")
 	public ResponseEntity<List<PacienteResponseDTO>> listarPacientes(@RequestParam(required=false) Integer page) {
 		//VERIFICAR A FORMA DE PASSAR A PÁGINA

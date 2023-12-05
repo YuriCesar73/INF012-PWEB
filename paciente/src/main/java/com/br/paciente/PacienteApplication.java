@@ -5,12 +5,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 
-@SpringBootApplication
-@EnableFeignClients
-public class PacienteApplication {
+@SpringBootApplication 
+@EnableFeignClients   
+public class PacienteApplication {  
 
-	public static void main(String[] args) {
+	public static void main(String[] args) { 
 		SpringApplication.run(PacienteApplication.class, args);
 	}
+	
+	
 
 }

@@ -137,7 +137,7 @@ public class ConsultaService {
 	
 	private boolean validaUnicaConsultaDoDiaPaciente(LocalDate data, String cpfPaciente) throws JaPossuiAgendamento {
 		//Verifica se o paciente já tem uma consulta no dia
-		Optional<Consulta> consultaRegistro = consultaRepository.findByIdsDataAndIdsPaciente(data, cpfPaciente);
+		Optional<Consulta> consultaRegistro = consultaRepository.findByIdsDataAndIdsPacienteAndDesmarcadaFalse(data, cpfPaciente);
 		
 		if(consultaRegistro.isPresent() && !consultaRegistro.get().getDesmarcada()) {
 			throw new JaPossuiAgendamento(data);
@@ -193,8 +193,10 @@ public class ConsultaService {
 		
 		validaPaciente(cancelamento.paciente());
 		
-		Consulta consulta = consultaRepository.findByIdsDataAndIdsPaciente(cancelamento.data(), cancelamento.paciente())
+		Consulta consulta = consultaRepository.findByIdsDataAndIdsPacienteAndDesmarcadaFalse(cancelamento.data(), cancelamento.paciente())
 				            .orElseThrow(() -> new ConsultaNaoMarcada());
+		
+		System.out.println(consulta.getPaciente());
 		
 		
 		LocalDate dataATual = LocalDate.now();
@@ -235,7 +237,7 @@ public class ConsultaService {
 	}
 	
 	public List<ConsultaResponseDTO> listarPorPaciente(String cpf) {
-		List<Consulta> consultas = consultaRepository.findByIdsMedico(cpf);
+		List<Consulta> consultas = consultaRepository.findByIdsPacienteAndDesmarcadaFalse(cpf);
 		return ConsultaResponseDTO.converter(consultas);
 		
 	}

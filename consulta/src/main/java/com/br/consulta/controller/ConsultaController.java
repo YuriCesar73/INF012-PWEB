@@ -51,4 +51,9 @@ public class ConsultaController {
 	public ResponseEntity<List<ConsultaResponseDTO>> listarConsultasPorMedico(@PathVariable String crm){
 		return new ResponseEntity<List<ConsultaResponseDTO>>(service.listarPorMedico(crm),HttpStatus.ACCEPTED);	
 	}
+	
+	@GetMapping("/listar/paciente/{cpf}")
+	public ResponseEntity<List<ConsultaResponseDTO>> listarConsultasPorPaciente(@PathVariable String cpf){
+		return new ResponseEntity<List<ConsultaResponseDTO>>(service.listarPorPaciente(cpf),HttpStatus.ACCEPTED);	
+	}
 }
