@@ -65,7 +65,6 @@ public class ConsultaService {
 
 	private void validaDataHorario(LocalDate data, LocalTime horario) {
 		
-		System.out.println("\n\n\n\nValor da data: " + data);
 		validaDiaDaSemana(data.getDayOfWeek());
 		validaHorario(horario, data);
 	}
@@ -181,7 +180,6 @@ public class ConsultaService {
 	private void validaDiaDaSemana(DayOfWeek dayOfWeek) throws DiaInvalidoParaConsulta {
 		//Dia de funcionamento: Segunda a Sábado
 		
-		System.out.println("\n\n\n\nDia da semana: " + dayOfWeek + "\n\n\n");
 		if(dayOfWeek.equals(DayOfWeek.SUNDAY)) {
 			System.out.println("Entrei no if");
 			throw new DiaInvalidoParaConsulta();
@@ -196,7 +194,6 @@ public class ConsultaService {
 		Consulta consulta = consultaRepository.findByIdsDataAndIdsPacienteAndDesmarcadaFalse(cancelamento.data(), cancelamento.paciente())
 				            .orElseThrow(() -> new ConsultaNaoMarcada());
 		
-		System.out.println(consulta.getPaciente());
 		
 		
 		LocalDate dataATual = LocalDate.now();
@@ -231,7 +228,7 @@ public class ConsultaService {
 	}
 
 	public List<ConsultaResponseDTO> listarPorMedico(String crm) {
-		List<Consulta> consultas = consultaRepository.findByIdsMedico(crm);
+		List<Consulta> consultas = consultaRepository.findByIdsMedicoAndDesmarcadaFalse(crm);
 		return ConsultaResponseDTO.converter(consultas);
 		
 	}
